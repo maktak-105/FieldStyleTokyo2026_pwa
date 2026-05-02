@@ -238,7 +238,7 @@ function App() {
           </div>
           <div className="location-picker">
             <div className="location-row">
-              <button className="icon-btn red-bg" onClick={() => jump(currentLocation)} disabled={!currentLocation}>A</button>
+              <button className="icon-btn red-bg" onClick={() => jump(currentLocation)} disabled={!currentLocation}>●</button>
               <div className="search-container">
                 <input className="search-input" type="text" placeholder="現在地 (番号/店名)" value={inputA} onChange={(e) => { setInputA(e.target.value); handleSearch(e.target.value, setResultsA); }} />
                 {inputA && (
@@ -261,7 +261,7 @@ function App() {
               </div>
             </div>
             <div className="location-row">
-              <button className="icon-btn blue-bg" onClick={() => jump(destination)} disabled={!destination}>B</button>
+              <button className="icon-btn blue-bg" onClick={() => jump(destination)} disabled={!destination}>●</button>
               <div className="search-container">
                 <input className="search-input" type="text" placeholder="目的地 (番号/店名)" value={inputB} onChange={(e) => { setInputB(e.target.value); handleSearch(e.target.value, setResultsB); }} />
                 {inputB && (
@@ -296,18 +296,19 @@ function App() {
             <div className="help-content">
               <b>1. マップ切替</b>: 上部のタブ<br/>
               <b>2. 検索</b>: ブース番号、名称（1文字でも）<br/>
-              <b>3. ナビ</b>: 青点線（直線です）<br/>
+              <b>3. <span style={{color:'#ef4444'}}>●</span><span style={{color:'#3b82f6'}}>●</span>ボタン</b>: 検索したブースにジャンプ<br/>
+              <b>4. ナビ</b>: 青点線（直線です）<br/>
               &nbsp;&nbsp;※フロア移動時はエスカレータ経由<br/>
-              <b>4. マップ上の記号</b>:<br/>
-              <ul>
+              <b>5. マップ上の記号</b>:<br/>
+              <ul style={{ margin: '4px 0', paddingLeft: '20px' }}>
                 <li>● 一般ブース</li>
                 <li>■ エスカレータ、エレベータ</li>
                 <li>▲ 喫煙所</li>
               </ul>
-              <b>5. 地図の操作</b>: 他のアプリと同じ<br/>
-              <b>6. 🏠ボタン</b>: マップ全体表示<br/>
+              <b>6. 地図の操作</b>: 他のアプリと同じ<br/>
+              <b>7. 🏠ボタン</b>: マップ全体表示<br/>
               <br/>
-              <small style={{ opacity: 0.7 }}>※スマホのブラウザキャッシュを約3MB使用します</small>
+              <small style={{ opacity: 0.9, fontWeight: 'bold' }}>※スマホのブラウザキャッシュを約3MB使用します</small>
             </div>
             <img src="/author.png" alt="author" className="author-img" />
             <button className="help-close" onClick={() => setShowHelp(false)}>閉じる</button>

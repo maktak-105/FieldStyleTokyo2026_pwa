@@ -287,7 +287,9 @@ function App() {
         </div>
       </div>
       <button className="help-btn" onClick={() => setShowHelp(true)}>？</button>
-      <button className="reset-btn" onClick={resetLayout}>🏠</button>
+      <button className="reset-btn" onClick={resetLayout}>
+        <img src="/map_home.png" alt="home" style={{ width: '32px', height: '32px', borderRadius: '4px' }} />
+      </button>
 
       {showHelp && (
         <div className="modal-overlay" onClick={() => setShowHelp(false)}>
@@ -304,7 +306,7 @@ function App() {
               &nbsp;&nbsp;&nbsp;&nbsp;■ エスカレータ、エレベータ<br/>
               &nbsp;&nbsp;&nbsp;&nbsp;▲ 喫煙所<br/>
               <b>6. 地図の操作</b>: だいたい他のアプリと同じ<br/>
-              <b>7. 🏠ボタン</b>: マップ全体表示<br/>
+              <b>7. 地図アイコンボタン</b>: マップ全体表示<br/>
               <br/>
               <div style={{ color: '#1e293b', fontWeight: 'bold', fontSize: '12px', marginTop: '4px' }}>
                 ※Webアプリです、ブラウザキャッシュを約3MB使います

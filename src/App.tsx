@@ -305,7 +305,9 @@ function App() {
                 <li>▲ 喫煙所</li>
               </ul>
               <b>5. 地図の操作</b>: 他のアプリと同じ<br/>
-              <b>6. 🏠ボタン</b>: マップ全体表示
+              <b>6. 🏠ボタン</b>: マップ全体表示<br/>
+              <br/>
+              <small style={{ opacity: 0.7 }}>※スマホのブラウザキャッシュを約3MB使用します</small>
             </div>
             <img src="/author.png" alt="author" className="author-img" />
             <button className="help-close" onClick={() => setShowHelp(false)}>閉じる</button>

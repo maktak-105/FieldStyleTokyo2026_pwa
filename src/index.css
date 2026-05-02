@@ -142,7 +142,8 @@ body, html {
 .help-close:active { transform: scale(0.98); background: #0f172a; }
 
 .author-img {
-  position: absolute; right: 16px; bottom: 85px; width: 64px; height: 64px;
+  position: absolute; right: 16px; top: 10px; width: 64px; height: 64px;
   border-radius: 50%; border: 3px solid #f1f5f9; background: white;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 10;
 }

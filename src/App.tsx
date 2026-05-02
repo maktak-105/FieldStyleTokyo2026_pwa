@@ -298,17 +298,17 @@ function App() {
               <b>2. 検索</b>: ブース番号、名称（1文字でも）<br/>
               <b>3. <span style={{color:'#ef4444'}}>●</span><span style={{color:'#3b82f6'}}>●</span>ボタン</b>: 検索したブースにジャンプ<br/>
               <b>4. ナビ</b>: 青点線（直線です）<br/>
-              &nbsp;&nbsp;※フロア移動時はエスカレータ経由<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;※フロア移動時はエスカレータ経由<br/>
               <b>5. マップ上の記号</b>:<br/>
-              <ul style={{ margin: '4px 0', paddingLeft: '20px' }}>
-                <li>● 一般ブース</li>
-                <li>■ エスカレータ、エレベータ</li>
-                <li>▲ 喫煙所</li>
-              </ul>
-              <b>6. 地図の操作</b>: 他のアプリと同じ<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;● 一般ブース<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;■ エスカレータ、エレベータ<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;▲ 喫煙所<br/>
+              <b>6. 地図の操作</b>: だいたい他のアプリと同じ<br/>
               <b>7. 🏠ボタン</b>: マップ全体表示<br/>
               <br/>
-              <small style={{ opacity: 0.9, fontWeight: 'bold' }}>※スマホのブラウザキャッシュを約3MB使用します</small>
+              <div style={{ color: '#1e293b', fontWeight: 'bold', fontSize: '12px', marginTop: '4px' }}>
+                ※Webアプリです、ブラウザキャッシュを約3MB使います
+              </div>
             </div>
             <img src="/author.png" alt="author" className="author-img" />
             <button className="help-close" onClick={() => setShowHelp(false)}>閉じる</button>

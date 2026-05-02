@@ -288,7 +288,7 @@ function App() {
       </div>
       <button className="help-btn" onClick={() => setShowHelp(true)}>？</button>
       <button className="reset-btn" onClick={resetLayout} style={{ overflow: 'hidden' }}>
-        <img src="/map_home.png" alt="home" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src="/map_home.png" alt="home" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.15)' }} />
       </button>
 
       {showHelp && (

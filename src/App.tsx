@@ -238,7 +238,7 @@ function App() {
           </div>
           <div className="location-picker">
             <div className="location-row">
-              <button className="icon-btn red-bg" onClick={() => jump(currentLocation)} disabled={!currentLocation}>●</button>
+              <button className="icon-btn red-bg" onClick={() => jump(currentLocation)} disabled={!currentLocation}>A</button>
               <div className="search-container">
                 <input className="search-input" type="text" placeholder="現在地 (番号/店名)" value={inputA} onChange={(e) => { setInputA(e.target.value); handleSearch(e.target.value, setResultsA); }} />
                 {inputA && (
@@ -261,7 +261,7 @@ function App() {
               </div>
             </div>
             <div className="location-row">
-              <button className="icon-btn blue-bg" onClick={() => jump(destination)} disabled={!destination}>●</button>
+              <button className="icon-btn blue-bg" onClick={() => jump(destination)} disabled={!destination}>B</button>
               <div className="search-container">
                 <input className="search-input" type="text" placeholder="目的地 (番号/店名)" value={inputB} onChange={(e) => { setInputB(e.target.value); handleSearch(e.target.value, setResultsB); }} />
                 {inputB && (
@@ -298,7 +298,7 @@ function App() {
             <div className="help-content">
               <b>1. マップ切替</b>: 上部のタブ<br/>
               <b>2. 検索</b>: ブース番号、名称（1文字でも）<br/>
-              <b>3. <span style={{color:'#ef4444'}}>●</span><span style={{color:'#3b82f6'}}>●</span>ボタン</b>: 検索したブースにジャンプ<br/>
+              <b>3. <span style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'#ef4444', color:'white', fontSize:'12px', border:'1.5px solid white', boxShadow:'0 1px 3px rgba(0,0,0,0.2)', marginRight:'2px'}}>A</span><span style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'#3b82f6', color:'white', fontSize:'12px', border:'1.5px solid white', boxShadow:'0 1px 3px rgba(0,0,0,0.2)'}}>B</span>ボタン</b>: 検索したブースにジャンプ<br/>
               <b>4. ナビ</b>: 青点線（直線です）<br/>
               &nbsp;&nbsp;&nbsp;&nbsp;※フロア移動時はエスカレータ経由<br/>
               <b>5. マップ上の記号</b>:<br/>

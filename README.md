@@ -57,4 +57,6 @@ npx vercel --prod
 - 作者画像: `public/author.png`
 
 ---
+---
 Developed by Antigravity & User.
+Last Updated: 2026-05-03 09:42 (PWA Optimization Sync Test)

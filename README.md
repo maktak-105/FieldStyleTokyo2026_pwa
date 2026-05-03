@@ -89,8 +89,8 @@ npx vercel --prod
 ---
 
 ## 📊 運用管理・解析
-- **本番URL**: [https://fieldstyle-nav-pwa.vercel.app](https://fieldstyle-nav-pwa.vercel.app)
-- **管理画面**: [Vercel Dashboard](https://vercel.com/regzamaktak-4987s-projects/fieldstyle-nav-pwa)
+- **本番URL**: [https://fieldstyle-nav.vercel.app](https://fieldstyle-nav.vercel.app)
+- **管理画面**: [Vercel Dashboard](https://vercel.com/regzamaktak-4987s-projects/fieldstyle-nav)
 - **統計分析**: Vercel Analytics / Speed Insights により、アクセス数や読み込み速度をリアルタイムで監視しています。
 
 **Vercel Project ID:**

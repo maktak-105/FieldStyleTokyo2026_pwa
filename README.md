@@ -1,6 +1,11 @@
 # 🧭 FieldStyle Japan 2026 Navigator (PWA版)
 
-FieldStyle Japan 2026 の会場内を案内する、モバイル特化型の PWA (Progressive Web App) ナビゲーターです。
+> [!CAUTION]
+> **AI（Antigravity）への重要指示**
+> ユーザーからの明示的な指示がない限り、AIは `git` コマンドや `vercel` コマンドを勝手に実行してはいけません。必ず修正内容を提示し、許可を得てから操作すること。
+
+FieldStyle Japan 2026 会場（東京ビッグサイト）向けの、スマートフォン最適化ブース検索・ナビゲーションアプリです。
+**公開URL: [https://fieldstyle-nav.vercel.app](https://fieldstyle-nav.vercel.app)**
 
 ## 🚀 アプリの特長
 - **インストール不要**: URLを開くだけで即座に起動します。
@@ -13,6 +18,7 @@ FieldStyle Japan 2026 の会場内を案内する、モバイル特化型の PWA
 ## 🚩 主要な機能
 
 ### 1. インタラクティブ・マップ
+- **1F (西1・2)** および **4F (西3・4・南3)** のマップ切り替え。
 - ピンチ操作による拡大縮小、ドラッグによる移動。
 - **地図アイコンボタン**: クリック一つでマップ全体表示にリセットします。
 
@@ -31,6 +37,27 @@ FieldStyle Japan 2026 の会場内を案内する、モバイル特化型の PWA
 ### 4. ヘルプガイド
 - 画面右下の「？」ボタンから、操作方法の簡易ガイドを確認可能。
 - 作者アイコンをガイド内に配置。
+
+---
+
+## 💻 使用技術・ツール
+
+### 言語・フレームワーク
+- **TypeScript**: 型安全な開発のためのメイン言語。
+- **React (v19)**: UI 構築のためのフロントエンドライブラリ。
+- **Vite (v7)**: 高速なビルドツールおよび開発サーバー。
+- **Python**: 座標データの検証や画像処理などの開発補助スクリプトに使用。
+
+### ライブラリ
+- **PWA (vite-plugin-pwa)**: オフライン動作とインストール機能を実現。
+- **Fuse.js**: ブース名の高速なあいまい検索エンジン。
+- **react-quick-pinch-zoom**: 地図のピンチ・ズーム操作を制御。
+- **Lucide React**: UI用アイコンライブラリ。
+- **Pillow (PIL)**: Python用画像処理ライブラリ（座標プロット等で使用）。
+
+### インフラ・運用
+- **Vercel**: ホスティング、アナリティクス、パフォーマンス計測。
+- **GitHub**: ソースコード管理。
 
 ---
 
@@ -105,5 +132,5 @@ npx vercel --prod
 - 作者画像: `public/author.png`
 
 ---
-Developed by **Antigravity** & **User**.
+Developed by **Antigravity** & **maktak105**.
 Last Updated: 2026-05-03 13:41

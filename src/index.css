@@ -148,3 +148,28 @@ body, html {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   z-index: 10;
 }
+
+/* アプリ説明セクション */
+.app-info-section {
+  margin-top: 12px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #f1f5f9;
+  text-align: left;
+}
+.app-info-section h3 { 
+  font-size: 13px; margin-bottom: 10px; color: #1e293b; 
+  display: flex; align-items: center; gap: 6px;
+}
+.app-info-section h4 { 
+  font-size: 11px; margin-top: 10px; margin-bottom: 4px; color: #475569; 
+  border-left: 2px solid #cbd5e1; padding-left: 6px;
+}
+.app-info-section ul { padding-left: 14px; margin: 0; list-style: disc; }
+.app-info-section li { margin-bottom: 3px; color: #64748b; }
+.app-info-section b { color: #334155; }
+

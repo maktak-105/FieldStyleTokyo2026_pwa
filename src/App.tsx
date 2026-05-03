@@ -19,6 +19,7 @@ function App() {
   const imgRef = useRef<HTMLImageElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const [showHelp, setShowHelp] = useState(false);
+  const [showAppInfo, setShowAppInfo] = useState(false);
   const mapCanvasRef = useRef<HTMLDivElement>(null);
   const booths = boothsData as any[];
 
@@ -292,7 +293,7 @@ function App() {
       </button>
 
       {showHelp && (
-        <div className="modal-overlay" onClick={() => setShowHelp(false)}>
+        <div className="modal-overlay" onClick={() => { setShowHelp(false); setShowAppInfo(false); }}>
           <div className="help-modal" onClick={e => e.stopPropagation()}>
             <h2>使い方ガイド</h2>
             <div className="help-content">
@@ -311,9 +312,43 @@ function App() {
               <div style={{ color: '#1e293b', fontWeight: 'bold', fontSize: '12px', marginTop: '4px' }}>
                 ※Webアプリです、ブラウザキャッシュを約3MB使います
               </div>
+
+              <div style={{ marginTop: '16px', borderTop: '1px dashed #e2e8f0', paddingTop: '12px' }}>
+                <button 
+                  onClick={() => setShowAppInfo(!showAppInfo)} 
+                  style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '11px', textDecoration: 'underline', cursor: 'pointer', padding: '0', display: 'block', margin: '0 auto' }}
+                >
+                  {showAppInfo ? '説明を閉じる' : '開発技術・アプリ説明を表示'}
+                </button>
+                {showAppInfo && (
+                  <div className="app-info-section">
+                    <h3>アプリ概要</h3>
+                    <h4>言語・フレームワーク</h4>
+                    <ul>
+                      <li><b>TypeScript</b>: 型安全なメイン言語</li>
+                      <li><b>React (v19)</b>: UI 構築ライブラリ</li>
+                      <li><b>Vite (v7)</b>: 高速ビルドツール</li>
+                      <li><b>Python</b>: 座標検証・画像処理補助</li>
+                    </ul>
+                    <h4>ライブラリ</h4>
+                    <ul>
+                      <li><b>PWA</b>: オフライン・インストール機能</li>
+                      <li><b>Fuse.js</b>: 高速あいまい検索</li>
+                      <li><b>react-quick-pinch-zoom</b>: 地図操作</li>
+                      <li><b>Lucide React</b>: アイコン</li>
+                      <li><b>Pillow (PIL)</b>: 画像処理用補助</li>
+                    </ul>
+                    <h4>インフラ・運用</h4>
+                    <ul>
+                      <li><b>Vercel</b>: ホスティング・解析</li>
+                      <li><b>GitHub</b>: ソースコード管理</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
             <img src="/author.png" alt="author" className="author-img" />
-            <button className="help-close" onClick={() => setShowHelp(false)}>閉じる</button>
+            <button className="help-close" onClick={() => { setShowHelp(false); setShowAppInfo(false); }}>閉じる</button>
           </div>
         </div>
       )}

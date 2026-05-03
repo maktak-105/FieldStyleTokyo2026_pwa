@@ -296,15 +296,6 @@ function App() {
           <div className="help-modal" onClick={e => e.stopPropagation()}>
             <h2>使い方ガイド</h2>
             <div className="help-content">
-              <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', marginBottom: '15px', border: '1px solid #e2e8f0', fontSize: '13px' }}>
-                <b style={{ color: '#0f172a' }}>【アプリの概要】</b><br/>
-                1. Webアプリです、インストール不要<br/>
-                2. ユーザー登録/ログイン不要<br/>
-                3. 軽量・軽快（キャッシュ約3MB使用）<br/>
-                4. マップとリストは公式HPから転用<br/>
-                5. 一度開けば電波が無くても動きます
-              </div>
-              <b style={{ color: '#0f172a' }}>【使い方】</b><br/>
               <b>1. マップ切替</b>: 上部のタブ<br/>
               <b>2. 検索</b>: ブース番号、名称（1文字でも）<br/>
               <b>3. <span style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'#ef4444', border:'1.5px solid white', boxShadow:'0 1px 3px rgba(0,0,0,0.2)', marginRight:'2px'}}></span><span style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'#3b82f6', border:'1.5px solid white', boxShadow:'0 1px 3px rgba(0,0,0,0.2)'}}></span>ボタン</b>: 検索したブースにジャンプ<br/>

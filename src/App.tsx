@@ -344,7 +344,7 @@ function App() {
           <div className="help-modal" onClick={e => e.stopPropagation()}>
             <h2>使い方ガイド</h2>
             <div className="help-content">
-              <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※ホーム画面に追加すると一発起動できて便利です</span><br/>
+              <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※ホーム画面に追加すると一発起動できます</span><br/>
               <br/>
               <b>1. マップ切替</b>: 上部のタブ<br/>
               <b>2. 検索</b>: ブース番号、名称（1文字でも）<br/>

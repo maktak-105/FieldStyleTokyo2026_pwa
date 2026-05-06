@@ -20,6 +20,32 @@ function App() {
   const headerRef = useRef<HTMLDivElement>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [showAppInfo, setShowAppInfo] = useState(false);
+  const [favorites, setFavorites] = useState<any[]>(() => {
+    const saved = localStorage.getItem('fs2026_favorites');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showAllFavoritesOnMap, setShowAllFavoritesOnMap] = useState(false);
+  const [showFavoritesList, setShowFavoritesList] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('fs2026_favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (b: any) => {
+    if (!b) return;
+    const bId = getBoothNo(b);
+    if (favorites.some(f => getBoothNo(f) === bId)) {
+      setFavorites(favorites.filter(f => getBoothNo(f) !== bId));
+    } else {
+      setFavorites([b, ...favorites]);
+    }
+  };
+
+  const isFavorite = (b: any) => {
+    if (!b) return false;
+    return favorites.some(f => getBoothNo(f) === getBoothNo(b));
+  };
+
   const mapCanvasRef = useRef<HTMLDivElement>(null);
   const booths = boothsData as any[];
 
@@ -170,6 +196,17 @@ function App() {
     );
   };
 
+  const StarMarker = ({ b }: { b: any }) => {
+    const px = getProjectedCoord(b.x);
+    const py = getProjectedCoord(b.y);
+    const r = 24 / scale;
+    // 星のパス (中心 px, py)
+    const starPath = `M ${px} ${py - r} L ${px + r * 0.22} ${py - r * 0.3} L ${px + r * 0.95} ${py - r * 0.3} L ${px + r * 0.36} ${py + r * 0.12} L ${px + r * 0.59} ${py + r * 0.81} L ${px} ${py + r * 0.38} L ${px - r * 0.59} ${py + r * 0.81} L ${px - r * 0.36} ${py + r * 0.12} L ${px - r * 0.95} ${py - r * 0.3} L ${px - r * 0.22} ${py - r * 0.3} Z`;
+    return (
+      <path d={starPath} fill="#f59e0b" stroke="white" strokeWidth={3 / scale} />
+    );
+  };
+
   const currentSize = MAP_SIZES[activeMap];
 
   return (
@@ -225,6 +262,9 @@ function App() {
               }
               return null;
             })()}
+            {showAllFavoritesOnMap && favorites.filter(f => f.mapId === activeMap).map((f, i) => (
+              <StarMarker key={`fav-${i}`} b={f} />
+            ))}
             {currentLocation?.mapId === activeMap && <Marker b={currentLocation} type="A" />}
             {destination?.mapId === activeMap && <Marker b={destination} type="B" />}
           </svg>
@@ -240,6 +280,9 @@ function App() {
           <div className="location-picker">
             <div className="location-row">
               <button className="icon-btn red-bg" onClick={() => jump(currentLocation)} disabled={!currentLocation}></button>
+              <button className={`fav-toggle-btn ${isFavorite(currentLocation) ? 'active' : 'inactive'}`} onClick={() => toggleFavorite(currentLocation)} disabled={!currentLocation}>
+                {isFavorite(currentLocation) ? '★' : '☆'}
+              </button>
               <div className="search-container">
                 <input className="search-input" type="text" placeholder="現在地 (番号/店名)" value={inputA} onChange={(e) => { setInputA(e.target.value); handleSearch(e.target.value, setResultsA); }} />
                 {inputA && (
@@ -263,6 +306,9 @@ function App() {
             </div>
             <div className="location-row">
               <button className="icon-btn blue-bg" onClick={() => jump(destination)} disabled={!destination}></button>
+              <button className={`fav-toggle-btn ${isFavorite(destination) ? 'active' : 'inactive'}`} onClick={() => toggleFavorite(destination)} disabled={!destination}>
+                {isFavorite(destination) ? '★' : '☆'}
+              </button>
               <div className="search-container">
                 <input className="search-input" type="text" placeholder="目的地 (番号/店名)" value={inputB} onChange={(e) => { setInputB(e.target.value); handleSearch(e.target.value, setResultsB); }} />
                 {inputB && (
@@ -288,6 +334,7 @@ function App() {
         </div>
       </div>
       <button className="help-btn" onClick={() => setShowHelp(true)}>？</button>
+      <button className="fav-footer-btn" onClick={() => setShowFavoritesList(true)}>★</button>
       <button className="reset-btn" onClick={resetLayout} style={{ overflow: 'hidden' }}>
         <img src="/map_home.png" alt="home" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.15)' }} />
       </button>
@@ -300,17 +347,19 @@ function App() {
               <b>1. マップ切替</b>: 上部のタブ<br/>
               <b>2. 検索</b>: ブース番号、名称（1文字でも）<br/>
               <b>3. <span style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'#ef4444', border:'1.5px solid white', boxShadow:'0 1px 3px rgba(0,0,0,0.2)', marginRight:'2px'}}></span><span style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'#3b82f6', border:'1.5px solid white', boxShadow:'0 1px 3px rgba(0,0,0,0.2)'}}></span>ボタン</b>: 検索したブースにジャンプ<br/>
-              <b>4. ナビ</b>: 青点線（直線です）<br/>
+              <b>4. ☆★ボタン</b>: お気に入りの追加・削除<br/>
+              <b>5. ナビ</b>: 青点線（直線です）<br/>
               &nbsp;&nbsp;&nbsp;&nbsp;※フロア移動時はエスカレータ経由<br/>
-              <b>5. マップ上の記号</b>:<br/>
+              <b>6. マップ上の記号</b>:<br/>
               &nbsp;&nbsp;&nbsp;&nbsp;● 一般ブース<br/>
               &nbsp;&nbsp;&nbsp;&nbsp;■ エスカレータ、エレベータ<br/>
               &nbsp;&nbsp;&nbsp;&nbsp;▲ 喫煙所<br/>
-              <b>6. 地図の操作</b>: だいたい他のアプリと同じ<br/>
-              <b>7. 地図アイコンボタン</b>: マップ全体表示<br/>
+              <b>7. 地図の操作</b>: だいたい他のアプリと同じ<br/>
+              <b>8. 地図ボタン</b>: マップ全体表示<br/>
+              <b>9. <span style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'#f59e0b', border:'1.5px solid white', boxShadow:'0 1px 3px rgba(0,0,0,0.2)', color:'white', fontSize:'12px', fontWeight:'bold', marginRight:'2px'}}>★</span>ボタン</b>: お気に入り選択・全表示<br/>
               <br/>
               <div style={{ color: '#1e293b', fontWeight: 'bold', fontSize: '12px', marginTop: '4px' }}>
-                ※Webアプリです、ブラウザキャッシュを約3MB使います
+                ※Webアプリです、ブラウザキャッシュを約3MB使います、個人情報は一切収集してません
               </div>
 
               <div style={{ marginTop: '16px', borderTop: '1px dashed #e2e8f0', paddingTop: '12px' }}>
@@ -349,6 +398,35 @@ function App() {
             </div>
             <img src="/author.png" alt="author" className="author-img" />
             <button className="help-close" onClick={() => { setShowHelp(false); setShowAppInfo(false); }}>閉じる</button>
+          </div>
+        </div>
+      )}
+
+      {showFavoritesList && (
+        <div className="modal-overlay" onClick={() => setShowFavoritesList(false)}>
+          <div className="help-modal" onClick={e => e.stopPropagation()}>
+            <h2>お気に入りリスト</h2>
+            <div className="help-content" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              <div className={`fav-list-item all-show`} onClick={() => { setShowAllFavoritesOnMap(!showAllFavoritesOnMap); setShowFavoritesList(false); }}>
+                <span className="fav-star-icon">★</span> {showAllFavoritesOnMap ? '一括表示を解除' : 'すべて表示'}
+              </div>
+              {favorites.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>お気に入りはまだありません</div>
+              ) : (
+                favorites.map((b, i) => (
+                  <div key={i} className="fav-list-item" onClick={() => {
+                    setDestination(b);
+                    setInputB(`[${getBoothNo(b)}] ${b['__EMPTY']}`);
+                    setShowFavoritesList(false);
+                    jump(b);
+                  }}>
+                    <span className="fav-star-icon">★</span> [{getBoothNo(b)}] {b['__EMPTY']}
+                    <button className="fav-remove-btn" onClick={(e) => { e.stopPropagation(); toggleFavorite(b); }} title="削除" />
+                  </div>
+                ))
+              )}
+            </div>
+            <button className="help-close" onClick={() => setShowFavoritesList(false)}>閉じる</button>
           </div>
         </div>
       )}

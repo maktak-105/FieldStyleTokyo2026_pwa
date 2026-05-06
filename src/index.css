@@ -173,3 +173,43 @@ body, html {
 .app-info-section li { margin-bottom: 3px; color: #64748b; }
 .app-info-section b { color: #334155; }
 
+/* お気に入り機能用スタイル */
+.fav-toggle-btn {
+  background: none; border: none; font-size: 1.5rem; cursor: pointer;
+  padding: 0 4px; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s;
+}
+.fav-toggle-btn:active { transform: scale(1.2); }
+.fav-toggle-btn.active { color: #f59e0b; }
+.fav-toggle-btn.inactive { color: #cbd5e1; }
+
+.fav-footer-btn {
+  position: fixed; bottom: 170px; right: 20px; width: 56px; height: 56px; border-radius: 50%;
+  background: #f59e0b; color: white; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.25); font-size: 1.8rem;
+  display: flex; align-items: center; justify-content: center; z-index: 11000; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; font-weight: bold;
+}
+.fav-footer-btn:active { transform: scale(0.92); opacity: 0.9; }
+
+.fav-list-item {
+  padding: 14px 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600;
+}
+.fav-list-item:active { background: #f8fafc; }
+.fav-list-item.all-show { color: #f59e0b; border-bottom: 2px solid #f1f5f9; background: #fffbeb; }
+
+.fav-star-icon { color: #f59e0b; font-size: 1.2rem; }
+
+.fav-remove-btn {
+  background: #ef4444; color: white; border: none; border-radius: 50%;
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; margin-left: auto; flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.fav-remove-btn::before {
+  content: ""; display: block; width: 12px; height: 2px; background: white; border-radius: 1px;
+}
+.fav-remove-btn:active { transform: scale(0.9); opacity: 0.8; }
+
+
+

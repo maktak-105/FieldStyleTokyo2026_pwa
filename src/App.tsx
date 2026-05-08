@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import boothsData from './booths.json';
 import './index.css';
 
@@ -20,6 +21,8 @@ function App() {
   const headerRef = useRef<HTMLDivElement>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [showAppInfo, setShowAppInfo] = useState(false);
+  const [showLargeQR, setShowLargeQR] = useState(false);
+  const [showLargeAuthor, setShowLargeAuthor] = useState(false);
   const [favorites, setFavorites] = useState<any[]>(() => {
     const saved = localStorage.getItem('fs2026_favorites');
     return saved ? JSON.parse(saved) : [];
@@ -342,7 +345,24 @@ function App() {
       {showHelp && (
         <div className="modal-overlay" onClick={() => { setShowHelp(false); setShowAppInfo(false); }}>
           <div className="help-modal" onClick={e => e.stopPropagation()}>
-            <h2>使い方ガイド</h2>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', gap: '12px' }}>
+              <img 
+                src="/author.png" 
+                alt="author" 
+                className="author-img-mini" 
+                onClick={() => setShowLargeAuthor(true)} 
+                style={{ cursor: 'pointer' }}
+                title="プロフィール画像を拡大"
+              />
+              <h2 style={{ margin: 0, border: 'none', padding: 0, flex: 1 }}>使い方ガイド</h2>
+              <button 
+                className="qr-mini-btn" 
+                onClick={() => setShowLargeQR(true)}
+                title="共有用QRコードを表示"
+              >
+                <QRCodeSVG value="https://fieldstyle-nav.vercel.app" size={24} />
+              </button>
+            </div>
             <div className="help-content">
               <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※ホーム画面に追加すると一発起動できます</span><br/>
               <br/>
@@ -398,7 +418,6 @@ function App() {
                 )}
               </div>
             </div>
-            <img src="/author.png" alt="author" className="author-img" />
             <button className="help-close" onClick={() => { setShowHelp(false); setShowAppInfo(false); }}>閉じる</button>
           </div>
         </div>
@@ -429,6 +448,28 @@ function App() {
               )}
             </div>
             <button className="help-close" onClick={() => setShowFavoritesList(false)}>閉じる</button>
+          </div>
+        </div>
+      )}
+
+      {showLargeQR && (
+        <div className="qr-modal-overlay" onClick={() => setShowLargeQR(false)}>
+          <div className="qr-container" onClick={e => e.stopPropagation()}>
+            <h3>共有用QRコード</h3>
+            <div className="qr-wrapper">
+              <QRCodeSVG value="https://fieldstyle-nav.vercel.app" size={200} level="H" includeMargin={true} />
+            </div>
+            <p>https://fieldstyle-nav.vercel.app</p>
+            <button className="help-close" onClick={() => setShowLargeQR(false)}>閉じる</button>
+          </div>
+        </div>
+      )}
+
+      {showLargeAuthor && (
+        <div className="modal-overlay" onClick={() => setShowLargeAuthor(false)} style={{ zIndex: 50000 }}>
+          <div className="author-large-container" onClick={e => e.stopPropagation()}>
+            <img src="/author.png" alt="author" className="author-img-large" />
+            <button className="help-close" onClick={() => setShowLargeAuthor(false)}>閉じる</button>
           </div>
         </div>
       )}

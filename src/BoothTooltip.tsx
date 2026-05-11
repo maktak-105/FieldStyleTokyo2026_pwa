@@ -14,27 +14,45 @@ export const BoothTooltip: React.FC<BoothTooltipProps> = ({ booths }) => {
     return key ? String(b[key]) : '';
   };
 
+  // ブース番号でグループ化
+  const groups: { [key: string]: any[] } = {};
+  booths.forEach(b => {
+    const num = getBoothNo(b);
+    if (!groups[num]) groups[num] = [];
+    groups[num].push(b);
+  });
+
   return (
     <div className="booth-tooltip">
       <div className="tooltip-content">
         <div className="tooltip-list" style={{ 
           overflowY: 'auto', 
-          maxHeight: '250px',
+          maxHeight: '300px',
           paddingRight: '4px'
         }}>
-          {booths.map((booth, index) => (
-            <div key={index} className="tooltip-item" style={{ 
-              marginBottom: index < booths.length - 1 ? '10px' : '0',
-              paddingBottom: index < booths.length - 1 ? '8px' : '0',
-              borderBottom: index < booths.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none',
+          {Object.entries(groups).map(([num, items], gIndex) => (
+            <div key={num} className="tooltip-group" style={{ 
+              marginBottom: gIndex < Object.keys(groups).length - 1 ? '12px' : '0',
+              paddingBottom: gIndex < Object.keys(groups).length - 1 ? '8px' : '0',
+              borderBottom: gIndex < Object.keys(groups).length - 1 ? '1px solid rgba(255,255,255,0.2)' : 'none',
               textAlign: 'left'
             }}>
-              <div className="tooltip-number" style={{ fontSize: '0.75rem', color: '#60a5fa', fontWeight: '800' }}>
-                #{getBoothNo(booth)}
+              {/* 番号はグループごとに1回だけ表示 */}
+              <div className="tooltip-number" style={{ fontSize: '0.8rem', color: '#60a5fa', fontWeight: '800', marginBottom: '4px' }}>
+                #{num}
               </div>
-              <div className="tooltip-name" style={{ fontSize: '0.95rem', fontWeight: '600', marginTop: '2px' }}>
-                {booth['__EMPTY']}
-              </div>
+              {/* その番号に属する名称をすべてリストアップ */}
+              {items.map((item, iIndex) => (
+                <div key={iIndex} className="tooltip-name" style={{ 
+                  fontSize: '0.95rem', 
+                  fontWeight: '600', 
+                  marginTop: '2px',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-all'
+                }}>
+                  {item['__EMPTY']}
+                </div>
+              ))}
             </div>
           ))}
         </div>

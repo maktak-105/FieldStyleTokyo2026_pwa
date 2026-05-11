@@ -55,7 +55,19 @@ function check() {
     const app = fs.readFileSync(SACRED_FILES.app, 'utf8');
     const functionalSpecs = [
       { id: 'HIST_DESCENDING', match: '.slice().reverse().map' }, // 履歴降順
-      { id: 'SEARCH_THRESHOLD', match: 'threshold: 0.3' } // Fuse.js 検索感度
+      { id: 'HIST_LIMIT', match: '.slice(-20)' }, // 20件制限
+      { id: 'HIST_STORAGE', match: "localStorage.setItem('nav_history'" }, // 履歴保存
+      { id: 'SEARCH_THRESHOLD', match: 'threshold: 0.3' }, // Fuse.js 感度
+      { id: 'FAV_TOGGLE', match: "f['__EMPTY'] === booth['__EMPTY'] && f.mapId === booth.mapId" }, // お気に入り切替
+      { id: 'FAV_STORAGE', match: "localStorage.setItem('fs2026_favorites'" }, // お気に入り保存
+      { id: 'MAP_SWITCH', match: "activeMap === 'map1' ? '/map1.jpg' : '/map2.jpg'" }, // 地図切替
+      { id: 'RESET_LOGIC', match: 'setScale(s);' }, // リセット
+      { id: 'HELP_TRIGGER', match: 'setShowHelp(true)' }, // ヘルプ起動
+      { id: 'QR_TRIGGER', match: 'onShowQR={setShowLargeQR}' }, // QR起動
+      { id: 'AUTHOR_TRIGGER', match: 'onShowAuthor={setShowLargeAuthor}' }, // 作者表示
+      { id: 'ROUTE_LOGIC', match: "b['西展示棟1F'] === 'E11'" }, // 案内ロジック
+      { id: 'MARKER_LOGIC', match: "b['__EMPTY']?.includes('喫煙所')" }, // 特殊マーカー
+      { id: 'TOOLTIP_LOGIC', match: '<BoothTooltip booths={selectedBooths}' } // 吹き出し表示
     ];
     functionalSpecs.forEach(s => {
       if (!app.includes(s.match)) errors.push(`[!] Functional Spec Violation: ${s.id} in App.tsx`);

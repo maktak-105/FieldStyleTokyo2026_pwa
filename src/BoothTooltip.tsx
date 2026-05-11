@@ -2,9 +2,10 @@ import React from 'react';
 
 interface BoothTooltipProps {
   booths: any[];
+  onSelect?: (booth: any) => void;
 }
 
-export const BoothTooltip: React.FC<BoothTooltipProps> = ({ booths }) => {
+export const BoothTooltip: React.FC<BoothTooltipProps> = ({ booths, onSelect }) => {
   if (!booths || booths.length === 0) return null;
 
   const getBoothNo = (b: any) => {
@@ -53,14 +54,20 @@ export const BoothTooltip: React.FC<BoothTooltipProps> = ({ booths }) => {
               </div>
               
               {items.map((item, iIndex) => (
-                <div key={iIndex} className="tooltip-name" style={{ 
-                  fontSize: '0.95rem', 
-                  fontWeight: '600', 
-                  margin: '6px 0',
-                  whiteSpace: 'normal',
-                  wordBreak: 'break-all',
-                  color: 'white'
-                }}>
+                <div 
+                  key={iIndex} 
+                  className="tooltip-name" 
+                  onClick={() => onSelect?.(item)}
+                  style={{ 
+                    fontSize: '0.95rem', 
+                    fontWeight: '600', 
+                    margin: '6px 0',
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all',
+                    color: 'white',
+                    cursor: 'pointer'
+                  }}
+                >
                   {item['__EMPTY']}
                 </div>
               ))}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import boothsData from './booths.json';
 import { BoothTooltip } from './BoothTooltip';
+import { HelpModal, QRModal, AuthorModal } from './HelpBaseline';
 
 const booths = boothsData;
 
@@ -305,28 +306,38 @@ const App: React.FC = () => {
       </div>
 
       {showHelp && (
-        <div className="modal-overlay" onClick={() => { setShowHelp(false); setShowAppInfo(false); }}>
-          <div className="help-modal" onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', gap: '12px' }}>
-              <img src="/author.png" alt="author" className="author-img-mini" onClick={() => setShowLargeAuthor(true)} style={{ cursor: 'pointer' }} />
-              <h2 style={{ margin: 0, border: 'none', padding: 0, flex: 1 }}>使い方ガイド</h2>
-              <button className="qr-mini-btn" onClick={() => setShowLargeQR(true)}><QRCodeSVG value="https://fieldstyle-nav.vercel.app" size={24} /></button>
-            </div>
-            <div className="help-content">
-              <b>1. マップ切替</b>: 上部タブ<br/><b>2. 検索</b>: ブース番号/店名<br/><b>3. ナビ</b>: 青点線<br/><b>4. ★</b>: お気に入り<br/><b>5. ▲</b>: 目的地を現在地に設定
-            </div>
-            <button className="help-close" onClick={() => setShowHelp(false)}>閉じる</button>
-          </div>
-        </div>
+        <HelpModal 
+          onClose={() => { setShowHelp(false); setShowAppInfo(false); }} 
+          onShowAppInfo={setShowAppInfo} 
+          showAppInfo={showAppInfo} 
+          onShowQR={setShowLargeQR} 
+          onShowAuthor={setShowLargeAuthor} 
+        />
       )}
 
       {showFavoritesList && (
         <div className="modal-overlay" onClick={() => setShowFavoritesList(false)}>
           <div className="help-modal" onClick={e => e.stopPropagation()}>
-            <h2 style={{ marginBottom: '16px' }}>お気に入り</h2>
-            <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-              <div className="fav-list-item all-show" onClick={() => { setShowAllFavoritesOnMap(!showAllFavoritesOnMap); setShowFavoritesList(false); }}>★ {showAllFavoritesOnMap ? '全表示解除' : 'すべて表示'}</div>
-              {favorites.map((f, i) => (<div key={i} className="fav-list-item" onClick={() => { setDestination(f); setInputB(`[${getBoothNo(f)}] ${f['__EMPTY']}`); setShowFavoritesList(false); jump(f); }}>[{getBoothNo(f)}] {f['__EMPTY']}<button className="fav-remove-btn" onClick={(e) => { e.stopPropagation(); toggleFavorite(f); }}></button></div>))}
+            <h2>お気に入りリスト</h2>
+            <div className="help-content" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              <div className={`fav-list-item all-show`} onClick={() => { setShowAllFavoritesOnMap(!showAllFavoritesOnMap); setShowFavoritesList(false); }}>
+                <span className="fav-star-icon">★</span> {showAllFavoritesOnMap ? '一括表示を解除' : 'すべて表示'}
+              </div>
+              {favorites.length === 0 ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>お気に入りはまだありません</div>
+              ) : (
+                favorites.map((b, i) => (
+                  <div key={i} className="fav-list-item" onClick={() => {
+                    setDestination(b);
+                    setInputB(`[${getBoothNo(b)}] ${b['__EMPTY']}`);
+                    setShowFavoritesList(false);
+                    jump(b);
+                  }}>
+                    <span className="fav-star-icon">★</span> [{getBoothNo(b)}] {b['__EMPTY']}
+                    <button className="fav-remove-btn" onClick={(e) => { e.stopPropagation(); toggleFavorite(b); }} title="削除" />
+                  </div>
+                ))
+              )}
             </div>
             <button className="help-close" onClick={() => setShowFavoritesList(false)}>閉じる</button>
           </div>
@@ -342,8 +353,19 @@ const App: React.FC = () => {
             </div>
             <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
               {history.map((item, index) => (
-                <div key={index} className="history-item" onClick={() => { setCurrentLocation(item.from); setInputA(`[${getBoothNo(item.from)}] ${item.from['__EMPTY']}`); setDestination(item.to); setInputB(`[${getBoothNo(item.to)}] ${item.to['__EMPTY']}`); setActiveMap(item.from.mapId); setShowHistory(false); jump(item.from); }}>
-                  <div className="history-route"><div className="history-point"><span className="dot red"></span>{item.from['__EMPTY']}</div><div className="history-point"><span className="dot blue"></span>{item.to['__EMPTY']}</div></div>
+                <div key={index} className="history-item" onClick={() => {
+                  setCurrentLocation(item.from);
+                  setInputA(`[${getBoothNo(item.from)}] ${item.from['__EMPTY']}`);
+                  setDestination(item.to);
+                  setInputB(`[${getBoothNo(item.to)}] ${item.to['__EMPTY']}`);
+                  setActiveMap(item.from.mapId);
+                  setShowHistory(false);
+                  jump(item.from);
+                }}>
+                  <div className="history-route">
+                    <div className="history-point"><span className="dot red"></span>{item.from['__EMPTY']}</div>
+                    <div className="history-point"><span className="dot blue"></span>{item.to['__EMPTY']}</div>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div className="history-time">{new Date(item.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>
                     <button 
@@ -364,23 +386,8 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {showLargeQR && (
-        <div className="qr-modal-overlay" onClick={() => setShowLargeQR(false)}>
-          <div className="qr-container" onClick={e => e.stopPropagation()}>
-            <h3>共有</h3><div className="qr-wrapper"><QRCodeSVG value="https://fieldstyle-nav.vercel.app" size={200} /></div>
-            <button className="help-close" onClick={() => setShowLargeQR(false)}>閉じる</button>
-          </div>
-        </div>
-      )}
-
-      {showLargeAuthor && (
-        <div className="modal-overlay" onClick={() => setShowLargeAuthor(false)}>
-          <div className="author-large-container" onClick={e => e.stopPropagation()}>
-            <img src="/author.png" alt="author" className="author-img-large" />
-            <button className="help-close" onClick={() => setShowLargeAuthor(false)}>閉じる</button>
-          </div>
-        </div>
-      )}
+      {showLargeQR && <QRModal onClose={() => setShowLargeQR(false)} />}
+      {showLargeAuthor && <AuthorModal onClose={() => setShowLargeAuthor(false)} />}
     </div>
   );
 };

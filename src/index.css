@@ -141,9 +141,10 @@ body, html {
 .help-modal {
   background: white; width: 100%; max-width: 360px; border-radius: 20px; padding: 28px; 
   position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex; flex-direction: column; max-height: 85vh;
 }
 .help-modal h2 { margin: 0 0 16px 0; font-size: 20px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
-.help-content { font-size: 14px; line-height: 1.7; color: #334155; }
+.help-content { font-size: 14px; line-height: 1.7; color: #334155; overflow-y: auto; flex: 1; padding-right: 4px; }
 .help-close { width: 100%; margin-top: 24px; padding: 14px; background: #1e293b; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; }
 
 .author-img-mini { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #f1f5f9; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; }

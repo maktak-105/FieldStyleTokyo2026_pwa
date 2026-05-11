@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import boothsData from './booths.json';
 import { BoothTooltip } from './BoothTooltip';
 import { HelpModal, QRModal, AuthorModal } from './HelpBaseline';
+import Fuse from 'fuse.js';
 
 const booths = boothsData;
 
@@ -129,13 +130,16 @@ const App: React.FC = () => {
     }
   };
 
+  const fuse = new Fuse(booths, {
+    keys: ['__EMPTY', { name: 'boothNo', weight: 2 }],
+    threshold: 0.3,
+    distance: 100
+  });
+
   const handleSearch = (q: string, setResults: any) => {
     if (!q) { setResults([]); return; }
-    const filtered = booths.filter(b => 
-      String(b['__EMPTY']).includes(q) || 
-      Object.keys(b).some(k => !['mapId','x','y','__EMPTY','x_pixel','y_pixel'].includes(k) && String(b[k]).includes(q))
-    ).slice(0, 50);
-    setResults(filtered);
+    const results = fuse.search(q).map(r => r.item).slice(0, 50);
+    setResults(results);
   };
 
   const getBoothNo = (b: any) => {

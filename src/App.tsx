@@ -97,18 +97,36 @@ const App: React.FC = () => {
     setScale(newScale);
   };
 
+  const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
+  const [dist, setDist] = useState<number | null>(null);
+
   const handleStart = (e: any) => {
+    const t = e.touches ? e.touches[0] : e;
     setIsDragging(true);
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    setStartPos({ x: clientX - offset.x, y: clientY - offset.y });
+    setLastPos({ x: t.clientX, y: t.clientY });
+    if (e.touches && e.touches.length === 2) {
+      setDist(Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY));
+    }
   };
 
   const handleMove = (e: any) => {
     if (!isDragging) return;
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    setOffset({ x: clientX - startPos.x, y: clientY - startPos.y });
+    const touchCount = e.touches ? e.touches.length : 1;
+    if (touchCount === 2 && dist) {
+      const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      const newScale = Math.min(Math.max(scale * (d / dist), 0.1), 10);
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const newOffsetX = cx - (cx - offset.x) * (newScale / scale);
+      const newOffsetY = cy - (cy - offset.y) * (newScale / scale);
+      setScale(newScale);
+      setOffset({ x: newOffsetX, y: newOffsetY });
+      setDist(d);
+    } else if (touchCount === 1) {
+      const t = e.touches ? e.touches[0] : e;
+      setOffset(o => ({ x: o.x + (t.clientX - lastPos.x), y: o.y + (t.clientY - lastPos.y) }));
+      setLastPos({ x: t.clientX, y: t.clientY });
+    }
   };
 
   const handleSearch = (q: string, setResults: any) => {
@@ -231,14 +249,14 @@ const App: React.FC = () => {
               if (!currentLocation || !destination) return null;
               if (currentLocation.mapId === destination.mapId) {
                 if (currentLocation.mapId !== activeMap) return null;
-                return <line x1={currentLocation.x} y1={currentLocation.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale} ${20 / scale}`} markerEnd="url(#arrowhead)" />;
+                return <line x1={currentLocation.x} y1={currentLocation.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               }
               const escalator = booths.find(b => b.mapId === activeMap && (b['西展示棟1F'] === 'E11' || b['西展示棟1F'] === 'E41'));
               if (!escalator) return null;
               if (currentLocation.mapId === activeMap) {
-                return <line x1={currentLocation.x} y1={currentLocation.y} x2={escalator.x} y2={escalator.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale} ${20 / scale}`} markerEnd="url(#arrowhead)" />;
+                return <line x1={currentLocation.x} y1={currentLocation.y} x2={escalator.x} y2={escalator.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               } else if (destination.mapId === activeMap) {
-                return <line x1={escalator.x} y1={escalator.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale} ${20 / scale}`} markerEnd="url(#arrowhead)" />;
+                return <line x1={escalator.x} y1={escalator.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               }
               return null;
             })()}

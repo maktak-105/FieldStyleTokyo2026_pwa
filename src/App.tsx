@@ -352,34 +352,37 @@ const App: React.FC = () => {
               <button className="clear-history-btn" onClick={() => { if (window.confirm('削除しますか？')) { setHistory([]); localStorage.removeItem('nav_history'); } }}>削除</button>
             </div>
             <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-              {history.map((item, index) => (
-                <div key={index} className="history-item" onClick={() => {
-                  setCurrentLocation(item.from);
-                  setInputA(`[${getBoothNo(item.from)}] ${item.from['__EMPTY']}`);
-                  setDestination(item.to);
-                  setInputB(`[${getBoothNo(item.to)}] ${item.to['__EMPTY']}`);
-                  setActiveMap(item.from.mapId);
-                  setShowHistory(false);
-                  jump(item.from);
-                }}>
-                  <div className="history-route">
-                    <div className="history-point"><span className="dot red"></span>{item.from['__EMPTY']}</div>
-                    <div className="history-point"><span className="dot blue"></span>{item.to['__EMPTY']}</div>
+              {history.slice().reverse().map((item, index) => {
+                const originalIndex = history.length - 1 - index;
+                return (
+                  <div key={index} className="history-item" onClick={() => {
+                    setCurrentLocation(item.from);
+                    setInputA(`[${getBoothNo(item.from)}] ${item.from['__EMPTY']}`);
+                    setDestination(item.to);
+                    setInputB(`[${getBoothNo(item.to)}] ${item.to['__EMPTY']}`);
+                    setActiveMap(item.from.mapId);
+                    setShowHistory(false);
+                    jump(item.from);
+                  }}>
+                    <div className="history-route">
+                      <div className="history-point"><span className="dot red"></span>{item.from['__EMPTY']}</div>
+                      <div className="history-point"><span className="dot blue"></span>{item.to['__EMPTY']}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div className="history-time">{new Date(item.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>
+                      <button 
+                        className="fav-remove-btn" 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          const newHistory = history.filter((_, i) => i !== originalIndex);
+                          setHistory(newHistory);
+                          localStorage.setItem('nav_history', JSON.stringify(newHistory));
+                        }}
+                      ></button>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div className="history-time">{new Date(item.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</div>
-                    <button 
-                      className="fav-remove-btn" 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        const newHistory = history.filter((_, i) => i !== index);
-                        setHistory(newHistory);
-                        localStorage.setItem('nav_history', JSON.stringify(newHistory));
-                      }}
-                    ></button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <button className="help-close" onClick={() => setShowHistory(false)}>閉じる</button>
           </div>

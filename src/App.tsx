@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import boothsData from './booths.json';
 import './index.css';
+import { BoothTooltip } from './BoothTooltip';
 
 function App() {
   const [inputA, setInputA] = useState('');
@@ -13,6 +14,7 @@ function App() {
   const [activeMap, setActiveMap] = useState<'map1' | 'map2'>('map1');
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [selectedBooths, setSelectedBooths] = useState<any[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [dist, setDist] = useState<number | null>(null);
@@ -77,22 +79,55 @@ function App() {
     }
   };
 
+  // 1. マップ切り替え時やリサイズ時のレイアウト初期化
   useEffect(() => {
     resetLayout();
     const handleResize = () => resetLayout();
     window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [activeMap]);
 
+  // 2. 拡大率や位置が変更された時のブース判定
+  useEffect(() => {
+    const updateSelected = () => {
+      // テストのため閾値を極端に下げる (100%基準以下)
+      if (!mapCanvasRef.current || scale < 0.1) {
+        setSelectedBooths([]);
+        return;
+      }
+      const rect = mapCanvasRef.current.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      
+      const mapX = (cx - offset.x) / scale;
+      const mapY = (cy - offset.y) / scale;
+      
+      const founds = booths.filter(b => {
+        // 現在表示中のマップと同じIDのブースのみを抽出
+        if (b.mapId !== activeMap) return false;
+        const dx = b.x - mapX;
+        const dy = b.y - mapY;
+        return Math.hypot(dx, dy) <= 20; // 20pxの範囲内
+      });
+      setSelectedBooths(founds);
+    };
+
+    updateSelected();
+  }, [scale, offset, booths]);
+
+  useEffect(() => {
     const preventZoom = (e: TouchEvent) => {
       if (e.touches.length > 1 && e.cancelable) e.preventDefault();
     };
     document.addEventListener('touchstart', preventZoom, { passive: false });
     document.addEventListener('touchmove', preventZoom, { passive: false });
     return () => {
-      window.removeEventListener('resize', handleResize);
       document.removeEventListener('touchstart', preventZoom);
       document.removeEventListener('touchmove', preventZoom);
     };
-  }, [activeMap]);
+  }, []);
 
   const jump = (b: any) => {
     if (!b) return;
@@ -272,6 +307,23 @@ function App() {
             {destination?.mapId === activeMap && <Marker b={destination} type="B" />}
           </svg>
         </div>
+        
+        {/* 吹き出しの操作時に地図が動かないようにガード */}
+        <div onMouseDown={e => e.stopPropagation()} onTouchStart={e => e.stopPropagation()} onWheel={e => e.stopPropagation()}>
+          <BoothTooltip booths={selectedBooths} />
+        </div>
+        {(() => {
+          if (scale >= 0.1) {
+            return (
+              <div className="center-crosshair">
+                <div className="crosshair-circle"></div>
+                <div className="crosshair-h"></div>
+                <div className="crosshair-v"></div>
+              </div>
+            );
+          }
+          return null;
+        })()}
       </div>
 
       <div className="ui-layer">

@@ -374,8 +374,8 @@ const App: React.FC = () => {
               <button className="clear-history-btn" onClick={() => { if (window.confirm('削除しますか？')) { setHistory([]); localStorage.removeItem('nav_history'); } }}>削除</button>
             </div>
             <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-              {history.slice().reverse().map((item, index) => {
-                const originalIndex = history.length - 1 - index;
+              {history.map((item, index) => {
+                const originalIndex = index;
                 return (
                   <div key={index} className="history-item" onClick={() => {
                     setCurrentLocation(item.from);

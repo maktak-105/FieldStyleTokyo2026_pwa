@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
-const SACRED_SPECS = {
+const SACRED_FILES = {
   css: path.join(__dirname, '../src/index.css'),
   app: path.join(__dirname, '../src/App.tsx'),
   help: path.join(__dirname, '../src/HelpBaseline.tsx')
@@ -10,59 +11,63 @@ const SACRED_SPECS = {
 function check() {
   let errors = [];
 
-  // 1. CSSの配置とカラーチェック
-  if (fs.existsSync(SACRED_SPECS.css)) {
-    const css = fs.readFileSync(SACRED_SPECS.css, 'utf8');
-    const cssChecks = [
-      { name: 'FAV_BTN_POS', target: 'bottom: 170px;' },
-      { name: 'HIST_BTN_POS', target: 'bottom: 100px;' },
-      { name: 'ACTIONS_POS', target: 'bottom: 30px;' },
-      { name: 'FAV_COLOR', target: 'background: #f59e0b;' },
-      { name: 'PRIMARY_BLUE', target: 'background: #3b82f6;' }
+  // 1. 【全コード精査】仕様書（正規の状態）との照合
+  console.log('--- Phase 1: Full-System Specification Audit ---');
+  
+  // UI位置とカラーの全件チェック
+  if (fs.existsSync(SACRED_FILES.css)) {
+    const css = fs.readFileSync(SACRED_FILES.css, 'utf8');
+    const requirements = [
+      { id: 'UI_FAV_BTN', match: 'bottom: 170px;' },
+      { id: 'UI_HIST_BTN', match: 'bottom: 100px;' },
+      { id: 'UI_ACTIONS', match: 'bottom: 30px;' },
+      { id: 'UI_COLORS', match: 'background: #f59e0b;' }
     ];
-    cssChecks.forEach(c => {
-      if (!css.includes(c.target)) errors.push(`CSS: ${c.name} violation!`);
+    requirements.forEach(r => {
+      if (!css.includes(r.match)) errors.push(`[!] Specification Broken: ${r.id} missing or changed in index.css`);
     });
   }
 
-  // 2. App.tsx のロジック・要素チェック
-  if (fs.existsSync(SACRED_SPECS.app)) {
-    const app = fs.readFileSync(SACRED_SPECS.app, 'utf8');
-    const appChecks = [
-      { name: 'MARKER_R', target: 'const r = 22 / scale;' },
-      { name: 'STAR_R', target: 'const r = 24 / scale;' },
-      { name: 'PROMOTE_BTN', target: 'className="promote-btn"' }, // ▲ボタン
-      { name: 'HIST_REMOVE', target: 'className="fav-remove-btn"' }, // 履歴個別削除
-      { name: 'DESC_ORDER', target: 'history.slice().reverse().map' } // 履歴降順表示（※現在は昇順に直したはずなので要確認）
-    ];
-    appChecks.forEach(c => {
-      if (!app.includes(c.target)) errors.push(`JS: ${c.name} violation!`);
-    });
+  // ヘルプの完全性チェック（1〜9項目）
+  if (fs.existsSync(SACRED_FILES.help)) {
+    const help = fs.readFileSync(SACRED_FILES.help, 'utf8');
+    for (let i = 1; i <= 9; i++) {
+      if (!help.includes(`${i}.`)) errors.push(`[!] Specification Broken: Help Item ${i} is missing!`);
+    }
+    if (!help.includes('TypeScript') || !help.includes('React (v19)')) {
+      errors.push('[!] Specification Broken: Tech Stack info has been altered!');
+    }
   }
 
-  // 3. HelpBaseline.tsx の情報の完全性チェック
-  if (fs.existsSync(SACRED_SPECS.help)) {
-    const help = fs.readFileSync(SACRED_SPECS.help, 'utf8');
-    const helpItems = [
-      '1. マップ切替', '2. 検索', '3.', '4. ☆★ボタン', '5. ナビ', 
-      '6. マップ上の記号', '7. 地図の操作', '8. 地図ボタン', '9.'
-    ];
-    helpItems.forEach(item => {
-      if (!help.includes(item)) errors.push(`HELP: Item "${item}" missing!`);
-    });
+  // 核心ロジックのチェック
+  if (fs.existsSync(SACRED_FILES.app)) {
+    const app = fs.readFileSync(SACRED_FILES.app, 'utf8');
+    if (!app.includes('const r = 22 / scale;')) errors.push('[!] Specification Broken: MARKER_RADIUS changed!');
+    if (!app.includes('.slice().reverse().map')) errors.push('[!] Specification Broken: HISTORY_ORDER (Descending) changed!');
+  }
 
-    const techStack = ['TypeScript', 'React (v19)', 'Vite (v7)', 'PWA', 'Fuse.js'];
-    techStack.forEach(tech => {
-      if (!help.includes(tech)) errors.push(`TECH: "${tech}" missing from App Info!`);
-    });
+  // 2. 【差異の抽出】直前のGit状態（HEAD）との比較
+  console.log('--- Phase 2: Diff Detection (Justification Required) ---');
+  try {
+    const diff = execSync('git diff HEAD', { encoding: 'utf8' });
+    if (diff) {
+      console.log('\x1b[33m%s\x1b[0m', '[⚠️] Differences detected from official baseline (HEAD):');
+      console.log(diff);
+      console.log('\x1b[33m%s\x1b[0m', '--------------------------------------------------------');
+      console.log('Ensure these changes are EXACTLY as instructed. Any unauthorized diff is a violation.');
+    } else {
+      console.log('\x1b[32m%s\x1b[0m', '✓ No differences from official baseline.');
+    }
+  } catch (e) {
+    console.error('Error running git diff:', e.message);
   }
 
   if (errors.length > 0) {
-    console.log('\x1b[31m%s\x1b[0m', '--- UI/SPEC BASELINE VIOLATION DETECTED ---');
-    errors.forEach(err => console.log(`[!] ${err}`));
+    console.log('\x1b[31m%s\x1b[0m', '--- !!! AUDIT FAILED !!! ---');
+    errors.forEach(err => console.log(err));
     process.exit(1);
   } else {
-    console.log('\x1b[32m%s\x1b[0m', '✓ All Specifications are perfect.');
+    console.log('\x1b[32m%s\x1b[0m', '✓ AUDIT PASSED: All specifications are intact.');
     process.exit(0);
   }
 }

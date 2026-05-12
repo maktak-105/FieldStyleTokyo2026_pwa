@@ -11,17 +11,23 @@ export const HelpModal: React.FC<{
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="help-modal" onClick={e => e.stopPropagation()}>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', position: 'relative', minHeight: '44px' }}>
           <img
             src="/author.png"
             alt="author"
             className="author-img-mini"
             onClick={() => onShowAuthor(true)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', zIndex: 1 }}
             title="プロフィール画像を拡大"
           />
-          <h2 style={{ margin: 0, border: 'none', padding: 0, flex: 1 }}>使い方ガイド</h2>
-          <button className="qr-mini-btn" onClick={() => onShowQR(true)} title="共有用QRコードを表示">
+          <h2 style={{ 
+            margin: 0, border: 'none', padding: 0, 
+            position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+            fontSize: '20px', color: '#1e293b', whiteSpace: 'nowrap'
+          }}>
+            使い方ガイド
+          </h2>
+          <button className="qr-mini-btn" onClick={() => onShowQR(true)} title="共有用QRコードを表示" style={{ zIndex: 1 }}>
             <QRCodeSVG value="https://fieldstyle-nav.vercel.app" size={24} />
           </button>
         </div>

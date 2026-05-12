@@ -109,12 +109,14 @@ const App: React.FC = () => {
   });
   const [showFavoritesList, setShowFavoritesList] = useState(false);
   const [showAllFavoritesOnMap, setShowAllFavoritesOnMap] = useState(false);
+  const [showClearHistoryConfirm, setShowClearHistoryConfirm] = useState(false);
 
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const mapCanvasRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const undoHistoryRef = useRef<any[] | null>(null);
 
   const fuse = useMemo(() => new Fuse(booths, {
     keys: Object.keys(booths[0] || {}).filter(k => !['mapId', 'x', 'y', 'x_pixel', 'y_pixel', '__EMPTY'].includes(k)).concat(['__EMPTY']),
@@ -222,6 +224,7 @@ const App: React.FC = () => {
     if (destination) {
       const last = navHistory[navHistory.length - 1];
       if (!last || last.booth['__EMPTY'] !== destination['__EMPTY'] || last.booth.mapId !== destination.mapId) {
+        undoHistoryRef.current = null;
         setNavHistory(prev => {
           if (prev.length === 0 && currentLocation) {
             return [
@@ -358,8 +361,12 @@ const App: React.FC = () => {
             ))}
           </div>
         </div>
-        <button className="fav-footer-btn" onClick={() => setShowFavoritesList(true)}>★</button>
-        <button className="history-btn" onClick={() => setShowHistory(true)}>
+        <button className="fav-footer-btn" onClick={() => setShowFavoritesList(true)}>
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="white">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </button>
+        <button className="history-btn" onClick={() => { if (navHistory.length === 0 && undoHistoryRef.current) { setNavHistory(undoHistoryRef.current); undoHistoryRef.current = null; } setShowHistory(true); }}>
           <svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path d="M 5 18 C 5 2, 12 2, 12 12 S 19 22, 19 6" stroke="#1e293b" strokeWidth="3.2" strokeLinecap="round" /><circle cx="5" cy="18" r="4" fill="#ef4444" /><circle cx="12" cy="12" r="4" fill="#22c55e" /><circle cx="19" cy="6" r="4" fill="#3b82f6" /></svg>
         </button>
         <div className="bottom-right-actions">
@@ -371,22 +378,77 @@ const App: React.FC = () => {
       {showHistory && (
         <div className="modal-overlay" onClick={() => setShowHistory(false)}>
           <div className="help-modal history-modal" onClick={e => e.stopPropagation()}>
-            <div className="history-modal-header" style={{ display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '12px' }}>
-              <h2 className="history-modal-title" style={{ margin: 0, padding: 0, fontSize: '18px', fontWeight: 'bold', border: 'none', color: '#1e293b', flexShrink: 0 }}>案内履歴</h2>
-              <button className={`toggle-all-history-btn ${showAllHistoryOnMap ? 'active' : 'inactive'}`} onClick={() => setShowAllHistoryOnMap(!showAllHistoryOnMap)} style={{ background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}>
+            <div className="history-modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '12px', position: 'relative', minHeight: '40px' }}>
+              <h2 className="history-modal-title" style={{ margin: 0, padding: 0, fontSize: '18px', fontWeight: 'bold', border: 'none', color: '#1e293b', flexShrink: 0, whiteSpace: 'nowrap' }}>案内履歴</h2>
+              <button className={`toggle-all-history-btn ${showAllHistoryOnMap ? 'active' : 'inactive'}`} onClick={() => setShowAllHistoryOnMap(!showAllHistoryOnMap)} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 {showAllHistoryOnMap ? '一括表示を解除' : 'すべて表示'}
               </button>
-              <div style={{ flex: 1 }}></div>
-              <button className="clear-history-btn" onClick={() => { 
-                if (window.confirm('案内履歴をすべて削除しますか？')) {
-                  setNavHistory([]);
-                  setInputA(''); setInputB('');
-                  setCurrentLocation(null); setDestination(null);
-                  setResultsA([]); setResultsB([]);
-                }
-              }} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}>削除</button>
+              <button className="clear-history-btn" onClick={() => setShowClearHistoryConfirm(true)} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}>削除</button>
             </div>
-            <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+            <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto', position: 'relative' }}>
+              {showClearHistoryConfirm && (
+                <div style={{ 
+                  position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
+                  backgroundColor: 'rgba(30, 41, 59, 0.7)', 
+                  zIndex: 200, display: 'flex', flexDirection: 'column', 
+                  alignItems: 'center', justifyContent: 'center', 
+                  padding: '24px', textAlign: 'center', 
+                  backdropFilter: 'blur(12px)', borderRadius: '12px',
+                  animation: 'premiumPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }}>
+                  <div style={{ 
+                    width: '64px', height: '64px', borderRadius: '50%', 
+                    background: 'rgba(239, 68, 68, 0.1)', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    marginBottom: '16px', border: '2px solid rgba(239, 68, 68, 0.2)'
+                  }}>
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+                    </svg>
+                  </div>
+                  <div style={{ marginBottom: '8px', color: 'white', fontWeight: '900', fontSize: '18px', letterSpacing: '-0.02em' }}>
+                    履歴をすべて消去しますか？
+                  </div>
+                  <div style={{ marginBottom: '24px', color: 'rgba(255, 255, 255, 0.7)', fontSize: '13px', lineHeight: '1.5' }}>
+                    この操作は取り消せません。<br/>案内履歴が完全にリセットされます。
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', width: '100%', maxWidth: '260px' }}>
+                    <button 
+                      onClick={() => setShowClearHistoryConfirm(false)}
+                      style={{ 
+                        flex: 1, padding: '14px', borderRadius: '14px', border: '1px solid rgba(255, 255, 255, 0.1)', 
+                        background: 'rgba(255, 255, 255, 0.05)', color: 'white', fontSize: '14px', fontWeight: 'bold', 
+                        cursor: 'pointer', transition: 'all 0.2s' 
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                    >
+                      キャンセル
+                    </button>
+                    <button 
+                      onClick={() => {
+                        undoHistoryRef.current = [...navHistory];
+                        setNavHistory([]);
+                        setInputA(''); setInputB('');
+                        setCurrentLocation(null); setDestination(null);
+                        setResultsA([]); setResultsB([]);
+                        setShowClearHistoryConfirm(false);
+                      }}
+                      style={{ 
+                        flex: 1, padding: '14px', borderRadius: '14px', border: 'none', 
+                        background: 'linear-gradient(135deg, #ef4444, #b91c1c)', 
+                        color: 'white', fontSize: '14px', fontWeight: 'bold', 
+                        cursor: 'pointer', boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                      onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      削除する
+                    </button>
+                  </div>
+                </div>
+              )}
               {navHistory.length === 0 ? <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>履歴はありません</div> : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onDragStart} onDragEnd={onDragEnd}>
                   <SortableContext items={navHistory.map(i => i.id)} strategy={verticalListSortingStrategy}>
@@ -411,11 +473,12 @@ const App: React.FC = () => {
       {showFavoritesList && (
         <div className="modal-overlay" onClick={() => setShowFavoritesList(false)}>
           <div className="help-modal" onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '12px' }}>
-              <h2 style={{ margin: 0, padding: 0, fontSize: '18px', fontWeight: 'bold', border: 'none', color: '#1e293b', flexShrink: 0 }}>お気に入り</h2>
-              <button className={`toggle-all-history-btn ${showAllFavoritesOnMap ? 'active' : 'inactive'}`} onClick={() => setShowAllFavoritesOnMap(!showAllFavoritesOnMap)} style={{ background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '12px', position: 'relative', minHeight: '40px' }}>
+              <h2 style={{ margin: 0, padding: 0, fontSize: '18px', fontWeight: 'bold', border: 'none', color: '#1e293b', flexShrink: 0, whiteSpace: 'nowrap' }}>お気に入り</h2>
+              <button className={`toggle-all-history-btn ${showAllFavoritesOnMap ? 'active' : 'inactive'}`} onClick={() => setShowAllFavoritesOnMap(!showAllFavoritesOnMap)} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 {showAllFavoritesOnMap ? 'すべて解除' : 'すべて表示'}
               </button>
+              <div style={{ width: '40px' }}></div> 
             </div>
             <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
               {favorites.length === 0 ? <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>お気に入りはありません</div> : (

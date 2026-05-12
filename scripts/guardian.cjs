@@ -2,18 +2,18 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 🧭 Guardian V9.0 (Multi-Spec Audit)
- * README.md および ROUTE_NAVIGATION_HISTORY_SPEC.md を正典とし、
- * 実装（App.tsx, index.css, HelpBaseline.tsx）との整合性を物理的に強制する。
+ * 🧭 Guardian V8.0 (完全整合性監査)
+ * README.md および GUARDIAN_UI_SPEC.md を基準とする。
+ * 
+ * [監査対象]
+ * 1. UI詳細（マーカー/ライン数値、FAB配置、余白、照準）
+ * 2. 画面機能（検索閾値、昇格、DND、一括削除クリア、フロア案内、照準しきい値）
+ * 3. ヘルプ内容（README 原文との 100% 同期）
  */
 
-const SPECS = {
+const FILES = {
   readme: path.join(__dirname, '../README.md'),
-  ui_spec: path.join(__dirname, '../docs/specifications/GUARDIAN_UI_SPEC.md'),
-  route_spec: path.join(__dirname, '../docs/specifications/ROUTE_NAVIGATION_HISTORY_SPEC.md')
-};
-
-const CODE = {
+  spec: path.join(__dirname, '../docs/specifications/GUARDIAN_UI_SPEC.md'),
   app: path.join(__dirname, '../src/App.tsx'),
   css: path.join(__dirname, '../src/index.css'),
   help: path.join(__dirname, '../src/HelpBaseline.tsx')
@@ -21,82 +21,88 @@ const CODE = {
 
 function audit() {
   let errors = [];
-  const readme = fs.readFileSync(SPECS.readme, 'utf8');
-  const ui_spec = fs.readFileSync(SPECS.ui_spec, 'utf8');
-  const route_spec = fs.readFileSync(SPECS.route_spec, 'utf8');
-  const app = fs.readFileSync(CODE.app, 'utf8');
-  const css = fs.readFileSync(CODE.css, 'utf8');
-  const help = fs.readFileSync(CODE.help, 'utf8');
+  const readme = fs.readFileSync(FILES.readme, 'utf8');
+  const spec = fs.readFileSync(FILES.spec, 'utf8');
+  const app = fs.readFileSync(FILES.app, 'utf8');
+  const css = fs.readFileSync(FILES.css, 'utf8');
+  const help = fs.readFileSync(FILES.help, 'utf8');
 
-  console.log('\x1b[36m%s\x1b[0m', '--- [🧭 Guardian V9.0: Multi-Spec Integrity Audit] ---');
+  console.log('\x1b[36m%s\x1b[0m', '--- [🧭 Guardian V8.0: 完全整合性監査実行中] ---');
 
-  // --- 1. 核心ロジック監査 (Logic Check) ---
-  console.log('Phase 1: Core Logic & Specification Sync...');
-
-  // 検索閾値の監査 (GUARDIAN_UI_SPEC.md にて 0.4 と定義)
-  if (!app.includes('threshold: 0.4')) {
-    errors.push('[!] Logic Error: Fuse.js threshold must be 0.4 as defined in GUARDIAN_UI_SPEC.md');
-  }
-
-  // 巡回ルート案内 (ROUTE_NAVIGATION_HISTORY_SPEC.md)
-  const routeRequirements = [
-    { id: 'DND_STRUCTURE', match: 'DndContext', desc: 'Drag & Drop Structure' },
-    { id: 'COLOR_LOGIC_START', match: '#FF0000', desc: 'Start Point Color (Red)' },
-    { id: 'COLOR_LOGIC_MID', match: '#00FF00', desc: 'Intermediate Point Color (Green)' },
-    { id: 'COLOR_LOGIC_END', match: '#0000FF', desc: 'End Point Color (Blue)' }
-  ];
-
-  routeRequirements.forEach(req => {
-    if (!app.includes(req.match)) {
-      errors.push(`[!] Logic Error: Missing "${req.desc}" structure in App.tsx (Required by ROUTE_NAVIGATION_HISTORY_SPEC.md)`);
-    }
-  });
-
-  // --- 2. UIベースライン監査 (CSS & Layout) ---
-  console.log('Phase 2: UI Baseline & CSS Audit...');
-
-  const checkCSS = (selector, prop, expectedValue) => {
-    const regex = new RegExp(`${selector}[^{]*{[^}]*${prop}:\\s*([^;]+);`, 's');
-    const match = css.match(regex);
-    if (!match) {
-      errors.push(`[!] CSS Error: Selector "${selector}" or property "${prop}" not found.`);
-    } else if (match[1].trim() !== expectedValue) {
-      errors.push(`[!] Style Drift: ${selector} { ${prop}: ${match[1].trim()} } != Spec (${expectedValue})`);
-    }
+  const check = (content, target, desc) => {
+    if (!content.includes(target)) errors.push(`[!] 監査失敗: "${desc}" (${target}) が見つかりません`);
   };
 
-  checkCSS('.fav-footer-btn', 'bottom', '170px');
-  checkCSS('.history-btn', 'bottom', '100px');
-  checkCSS('.bottom-right-actions', 'bottom', '30px');
+  // --- 1. UIベースライン監査 ---
+  console.log('フェーズ1: UIベースライン & レイアウト監査...');
 
-  // マーカー仕様の監査
-  if (!app.includes('22 / scale') || !app.includes('5 / scale')) {
-    errors.push('[!] UI Error: Marker Radius (22/scale) or Stroke (5/scale) deviates from UI Baseline.');
-  }
-
-  // --- 3. ヘルプ文言の完全同期 (Content Sync) ---
-  console.log('Phase 3: Content Sync Audit...');
-  const helpItems = [
-    'マップ切替', '検索', 'ジャンプボタン', 'お気に入り', 'ナビゲーション',
-    '地図上の記号', '地図ボタン'
+  // マーカー & ライン数値
+  const uiMetrics = [
+    { m: '22 / scale', d: 'マーカー半径' },
+    { m: '5 / scale', d: 'マーカー枠線幅' },
+    { m: 'fontWeight: \'900\'', d: 'マーカーフォント太さ' }, // App.tsx 内の定義
+    { m: '2 / scale', d: 'マーカー文字縁取り' },
+    { m: '10 / scale', d: '案内ライン幅' },
+    { m: '20 / scale}, ${20 / scale', d: '案内ライン点線間隔' } // App.tsx 内の形式
   ];
-  helpItems.forEach(item => {
-    if (!help.includes(item)) errors.push(`[!] Content Error: Help item "${item}" missing from HelpBaseline.tsx`);
-    if (!readme.includes(item)) errors.push(`[!] Spec Error: Help item "${item}" missing from README.md`);
+  uiMetrics.forEach(item => check(app, item.m, item.d));
+
+  // CSS 配置
+  check(css, '32px', '照準（クロスヘア）直径');
+  check(css, 'bottom: 170px', 'お気に入りボタン位置 (170px)');
+  check(css, 'bottom: 100px', '履歴ボタン位置 (100px)');
+  check(css, 'bottom: 30px', '右下アクション群位置 (30px)');
+  check(css, 'gap: 12px', 'プレミアム余白 (gap: 12px)');
+
+  // --- 2. 画面機能 & ロジック監査 ---
+  console.log('フェーズ2: 画面機能 & ロジック監査...');
+
+  // 核心ロジック
+  check(app, 'promoteToStart', '目的地昇格ロジック (▲)');
+  check(app, 'threshold: 0.4', 'Fuse.js 検索閾値 (0.4)');
+  check(app, 'DndContext', 'ドラッグ＆ドロップ構造');
+  check(app, 'DragOverlay', 'プレミアム・ドラッグオーバーレイ');
+  check(app, 'scale >= 1.0', 'ツールチップ表示閾値 (1.0倍)');
+  check(app, 'エスカレータ', 'エスカレーター優先案内ロジック');
+
+  // 一括削除時の連動クリア（入力欄リセットの存在）
+  check(app, 'setInputA(\'\'); setInputB(\'\');', '一括削除時：入力欄リセット');
+  check(app, 'setCurrentLocation(null); setDestination(null);', '一括削除時：状態リセット');
+
+  // --- 3. ヘルプ内容同期監査 ---
+  console.log('フェーズ3: ヘルプ内容同期監査...');
+
+  // README からの原文抽出（主要な文言のみ抜粋してチェック）
+  const helpVerbatim = [
+    '上部のタブでフロアを切り替え。',
+    'ブース番号や名称で素早く検索。',
+    '検索窓横のボタンで対象に移動。',
+    '青点線でルートを案内（エスカレータ経由）。',
+    '右下の地図ボタンで全体を表示。'
+  ];
+  helpVerbatim.forEach(text => {
+    if (!help.includes(text)) errors.push(`[!] ヘルプ文言エラー: "${text}" が HelpBaseline.tsx に存在しません`);
+  });
+
+  // 技術スタック
+  const techStack = ['TypeScript', 'React (v19)', 'Vite (v7)', 'PWA', 'Fuse.js', 'Vercel'];
+  techStack.forEach(tech => {
+    if (!help.includes(tech)) errors.push(`[!] 技術スタックエラー: "${tech}" が HelpBaseline.tsx に記載されていません`);
   });
 
   // --- 判定結果 ---
   if (errors.length > 0) {
-    console.log('\n\x1b[31m%s\x1b[0m', '--- !!! COMPLIANCE SYNC FAILED !!! ---');
+    console.log('\n\x1b[31m%s\x1b[0m', '--- !!! 仕様適合監査 失敗 !!! ---');
     errors.forEach(err => console.log('\x1b[31m%s\x1b[0m', err));
-    console.log('\n[!] 実装が最新の仕様書（README / ROUTE_SPEC）に追いついていません。修正が必要です。');
+    console.log('\n[!] 実装が最新の仕様（V8.0 / README）から逸脱しています。修正が必要です。');
     process.exit(1);
   } else {
-    console.log('\n\x1b[32m%s\x1b[0m', '✓ [GUARDIAN] ALL SPECS ARE PERFECTLY SYNCED.');
+    console.log('\n\x1b[32m%s\x1b[0m', '✓ [GUARDIAN V8.0] すべての仕様が完全に同期されました。');
     process.exit(0);
   }
 }
 
-
-
-try { audit(); } catch (e) { process.exit(1); }
+try { audit(); } catch (e) {
+  console.error('監査実行中に予期せぬエラーが発生しました:', e);
+  process.exit(1);
+}

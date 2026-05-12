@@ -24,15 +24,15 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const booths = Array.isArray(boothsData) 
-  ? boothsData 
+const booths = Array.isArray(boothsData)
+  ? boothsData
   : (boothsData as any)?.default && Array.isArray((boothsData as any).default)
     ? (boothsData as any).default
     : [];
 
 const SortableHistoryItem = ({ id, item, onToggle, onDelete, getBoothNo, isOverlay }: any) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  
+
   const style = {
     transform: CSS.Translate.toString(transform),
     transition,
@@ -50,7 +50,7 @@ const SortableHistoryItem = ({ id, item, onToggle, onDelete, getBoothNo, isOverl
   };
 
   if (!item || !item.booth) return null;
-  
+
   return (
     <div ref={setNodeRef} style={style} className="history-item">
       <div className="history-drag-handle" {...attributes} {...listeners} style={{ cursor: isOverlay ? 'grabbing' : 'grab', color: '#94a3b8', fontSize: '18px', userSelect: 'none', padding: '0 4px' }}>☰</div>
@@ -75,7 +75,7 @@ const App: React.FC = () => {
   const [resultsB, setResultsB] = useState<any[]>([]);
   const [currentLocation, setCurrentLocation] = useState<any>(null);
   const [destination, setDestination] = useState<any>(null);
-  
+
   const [navHistory, setNavHistory] = useState<any[]>(() => {
     try {
       const saved = localStorage.getItem('fieldstyle_nav_history_v10');
@@ -83,7 +83,7 @@ const App: React.FC = () => {
       return Array.isArray(parsed) ? parsed.filter(i => i && i.id && i.booth) : [];
     } catch (e) { return []; }
   });
-  
+
   const [showHistory, setShowHistory] = useState(false);
   const [showAllHistoryOnMap, setShowAllHistoryOnMap] = useState(false);
   const [activeMap, setActiveMap] = useState<'map1' | 'map2'>('map1');
@@ -93,13 +93,13 @@ const App: React.FC = () => {
   const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
   const [dist, setDist] = useState<number | null>(null);
   const [currentSize, setCurrentSize] = useState({ w: 1000, h: 1000 });
-  
+
   const [showHelp, setShowHelp] = useState(false);
   const [showTechInfo, setShowTechInfo] = useState(false);
   const [showLargeQR, setShowLargeQR] = useState(false);
   const [showAuthorModal, setShowAuthorModal] = useState(false);
   const [selectedBooths, setSelectedBooths] = useState<any[]>([]);
-  
+
   const [favorites, setFavorites] = useState<any[]>(() => {
     try {
       const saved = localStorage.getItem('fs2026_favorites');
@@ -118,7 +118,7 @@ const App: React.FC = () => {
 
   const fuse = useMemo(() => new Fuse(booths, {
     keys: Object.keys(booths[0] || {}).filter(k => !['mapId', 'x', 'y', 'x_pixel', 'y_pixel', '__EMPTY'].includes(k)).concat(['__EMPTY']),
-    threshold: 0.4, 
+    threshold: 0.4,
     distance: 100,
     minMatchCharLength: 1
   }), [booths]);
@@ -211,7 +211,7 @@ const App: React.FC = () => {
     const imgCenterX = (cw / 2 - offset.x) / (scale || 1);
     const imgCenterY = (ch / 2 - offset.y) / (scale || 1);
     if (scale >= 1.0) {
-      const found = booths.filter(b => b.mapId === activeMap && Math.sqrt((b.x - imgCenterX)**2 + (b.y - imgCenterY)**2) < 40);
+      const found = booths.filter(b => b.mapId === activeMap && Math.sqrt((b.x - imgCenterX) ** 2 + (b.y - imgCenterY) ** 2) < 40);
       setSelectedBooths(found);
     } else {
       setSelectedBooths([]);
@@ -263,7 +263,7 @@ const App: React.FC = () => {
     const r = 22 / scale;
     return (
       <g>
-        {!isHistory && (b['__EMPTY']?.includes('エスカレータ')) 
+        {!isHistory && (b['__EMPTY']?.includes('エスカレータ'))
           ? <rect x={(b.x || 0) - r} y={(b.y || 0) - r} width={r * 2} height={r * 2} fill={color} stroke="white" strokeWidth={5 / scale} />
           : <circle cx={b.x || 0} cy={b.y || 0} r={r} fill={color} stroke="white" strokeWidth={5 / scale} />
         }
@@ -290,13 +290,13 @@ const App: React.FC = () => {
           <svg viewBox={`0 0 ${currentSize.w} ${currentSize.h}`} style={{ position: 'absolute', top: 0, left: 0, width: currentSize.w, height: currentSize.h, pointerEvents: 'none' }}>
             <defs><marker id="arrowhead" markerWidth="5" markerHeight="3.5" refX="4" refY="1.75" orient="auto"><polygon points="0 0, 5 1.75, 0 3.5" fill="#1d4ed8" /></marker></defs>
             {showAllHistoryOnMap && visibleHistoryBooths.length > 1 && visibleHistoryBooths.slice(0, -1).map((h, i) => {
-              const s = h.booth; const e = visibleHistoryBooths[i+1]?.booth;
+              const s = h.booth; const e = visibleHistoryBooths[i + 1]?.booth;
               const isTrans = (b: any) => b['__EMPTY']?.includes('エスカレータ');
               if (s.mapId === e.mapId) {
                 if (s.mapId === activeMap) return <line key={i} x1={s.x} y1={s.y} x2={e.x} y2={e.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               } else {
-                const esc1 = booths.filter(b => b.mapId === s.mapId && isTrans(b)).sort((a,b) => Math.hypot(a.x-s.x, a.y-s.y) - Math.hypot(b.x-s.x, b.y-s.y))[0];
-                const esc2 = booths.filter(b => b.mapId === e.mapId && isTrans(b)).sort((a,b) => Math.hypot(a.x-e.x, a.y-e.y) - Math.hypot(b.x-e.x, b.y-e.y))[0];
+                const esc1 = booths.filter(b => b.mapId === s.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - s.x, a.y - s.y) - Math.hypot(b.x - s.x, b.y - s.y))[0];
+                const esc2 = booths.filter(b => b.mapId === e.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))[0];
                 if (s.mapId === activeMap && esc1) return <line key={i} x1={s.x} y1={s.y} x2={esc1.x} y2={esc1.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
                 if (e.mapId === activeMap && esc2) return <line key={i} x1={esc2.x} y1={esc2.y} x2={e.x} y2={e.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               }
@@ -307,8 +307,8 @@ const App: React.FC = () => {
               if (currentLocation.mapId === destination.mapId) {
                 if (currentLocation.mapId === activeMap) return <line x1={currentLocation.x} y1={currentLocation.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               } else {
-                const esc1 = booths.filter(b => b.mapId === currentLocation.mapId && isTrans(b)).sort((a,b) => Math.hypot(a.x-currentLocation.x, a.y-currentLocation.y) - Math.hypot(b.x-currentLocation.x, b.y-currentLocation.y))[0];
-                const esc2 = booths.filter(b => b.mapId === destination.mapId && isTrans(b)).sort((a,b) => Math.hypot(a.x-destination.x, a.y-destination.y) - Math.hypot(b.x-destination.x, b.y-destination.y))[0];
+                const esc1 = booths.filter(b => b.mapId === currentLocation.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - currentLocation.x, a.y - currentLocation.y) - Math.hypot(b.x - currentLocation.x, b.y - currentLocation.y))[0];
+                const esc2 = booths.filter(b => b.mapId === destination.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - destination.x, a.y - destination.y) - Math.hypot(b.x - destination.x, b.y - destination.y))[0];
                 if (currentLocation.mapId === activeMap && esc1) return <line x1={currentLocation.x} y1={currentLocation.y} x2={esc1.x} y2={esc1.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
                 if (destination.mapId === activeMap && esc2) return <line x1={esc2.x} y1={esc2.y} x2={e.x} y2={e.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               }
@@ -341,8 +341,8 @@ const App: React.FC = () => {
             <button className={`map-tab ${activeMap === 'map2' ? 'active' : ''}`} onClick={() => setActiveMap('map2')}>西3・4・南3 【4F】</button>
           </div>
           <div className="location-picker">
-            {[ {id:'A', label:'現在地', val:inputA, set:setInputA, res:resultsA, setRes:setResultsA, cur:currentLocation, setCur:setCurrentLocation, bg:'red-bg'},
-               {id:'B', label:'目的地', val:inputB, set:setInputB, res:resultsB, setRes:setResultsB, cur:destination, setCur:setDestination, bg:'blue-bg'} ].map((row) => (
+            {[{ id: 'A', label: '現在地', val: inputA, set: setInputA, res: resultsA, setRes: setResultsA, cur: currentLocation, setCur: setCurrentLocation, bg: 'red-bg' },
+            { id: 'B', label: '目的地', val: inputB, set: setInputB, res: resultsB, setRes: setResultsB, cur: destination, setCur: setDestination, bg: 'blue-bg' }].map((row) => (
               <div key={row.id} className="location-row">
                 <button className={`icon-btn ${row.bg}`} onClick={() => jump(row.cur)} disabled={!row.cur}></button>
                 <button className={`fav-toggle-btn ${isFavorite(row.cur) ? 'active' : 'inactive'}`} onClick={() => toggleFavorite(row.cur)} disabled={!row.cur}>{isFavorite(row.cur) ? '★' : '☆'}</button>
@@ -360,11 +360,11 @@ const App: React.FC = () => {
         </div>
         <button className="fav-footer-btn" onClick={() => setShowFavoritesList(true)}>★</button>
         <button className="history-btn" onClick={() => setShowHistory(true)}>
-          <svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path d="M 5 18 C 5 2, 12 2, 12 12 S 19 22, 19 6" stroke="#1e293b" strokeWidth="3.2" strokeLinecap="round"/><circle cx="5" cy="18" r="4" fill="#ef4444" /><circle cx="12" cy="12" r="4" fill="#22c55e" /><circle cx="19" cy="6" r="4" fill="#3b82f6" /></svg>
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path d="M 5 18 C 5 2, 12 2, 12 12 S 19 22, 19 6" stroke="#1e293b" strokeWidth="3.2" strokeLinecap="round" /><circle cx="5" cy="18" r="4" fill="#ef4444" /><circle cx="12" cy="12" r="4" fill="#22c55e" /><circle cx="19" cy="6" r="4" fill="#3b82f6" /></svg>
         </button>
         <div className="bottom-right-actions">
           <button className="help-btn" onClick={() => setShowHelp(true)}>？</button>
-          <button className="reset-btn" onClick={resetLayout}><svg viewBox="0 0 24 24" width="48" height="48" fill="none"><path d="M4 0V24M20 0V24M0 4H24M0 20H24" stroke="#94a3b8" strokeWidth="1.0"/><circle cx="12" cy="12" r="3.5" fill="#3b82f6"/></svg></button>
+          <button className="reset-btn" onClick={resetLayout}><svg viewBox="0 0 24 24" width="48" height="48" fill="none"><path d="M4 0V24M20 0V24M0 4H24M0 20H24" stroke="#94a3b8" strokeWidth="1.0" /><circle cx="12" cy="12" r="3.5" fill="#3b82f6" /></svg></button>
         </div>
       </div>
 
@@ -377,7 +377,7 @@ const App: React.FC = () => {
                 {showAllHistoryOnMap ? '一括表示を解除' : 'すべて表示'}
               </button>
               <div style={{ flex: 1 }}></div>
-              <button className="clear-history-btn" onClick={() => { 
+              <button className="clear-history-btn" onClick={() => {
                 setNavHistory([]);
                 setInputA(''); setInputB('');
                 setCurrentLocation(null); setDestination(null);
@@ -390,7 +390,7 @@ const App: React.FC = () => {
                   <SortableContext items={navHistory.map(i => i.id)} strategy={verticalListSortingStrategy}>
                     <div className="history-list">
                       {navHistory.map(item => (
-                        <SortableHistoryItem key={item.id} id={item.id} item={item} getBoothNo={getBoothNo} onToggle={(id:any) => setNavHistory(prev => prev.map(i => i.id === id ? {...i, visible: !i.visible} : i))} onDelete={(id:any) => setNavHistory(prev => prev.filter(i => i.id !== id))} />
+                        <SortableHistoryItem key={item.id} id={item.id} item={item} getBoothNo={getBoothNo} onToggle={(id: any) => setNavHistory(prev => prev.map(i => i.id === id ? { ...i, visible: !i.visible } : i))} onDelete={(id: any) => setNavHistory(prev => prev.filter(i => i.id !== id))} />
                       ))}
                     </div>
                   </SortableContext>

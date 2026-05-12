@@ -377,11 +377,13 @@ const App: React.FC = () => {
                 {showAllHistoryOnMap ? '一括表示を解除' : 'すべて表示'}
               </button>
               <div style={{ flex: 1 }}></div>
-              <button className="clear-history-btn" onClick={() => {
-                setNavHistory([]);
-                setInputA(''); setInputB('');
-                setCurrentLocation(null); setDestination(null);
-                setResultsA([]); setResultsB([]);
+              <button className="clear-history-btn" onClick={() => { 
+                if (window.confirm('案内履歴をすべて削除しますか？')) {
+                  setNavHistory([]);
+                  setInputA(''); setInputB('');
+                  setCurrentLocation(null); setDestination(null);
+                  setResultsA([]); setResultsB([]);
+                }
               }} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}>削除</button>
             </div>
             <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto' }}>

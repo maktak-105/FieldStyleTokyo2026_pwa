@@ -366,7 +366,7 @@ const App: React.FC = () => {
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
           </svg>
         </button>
-        <button className="history-btn" onClick={() => { if (navHistory.length === 0 && undoHistoryRef.current) { setNavHistory(undoHistoryRef.current); undoHistoryRef.current = null; } setShowHistory(true); }}>
+        <button className="history-btn" onClick={() => setShowHistory(true)}>
           <svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path d="M 5 18 C 5 2, 12 2, 12 12 S 19 22, 19 6" stroke="#1e293b" strokeWidth="3.2" strokeLinecap="round" /><circle cx="5" cy="18" r="4" fill="#ef4444" /><circle cx="12" cy="12" r="4" fill="#22c55e" /><circle cx="19" cy="6" r="4" fill="#3b82f6" /></svg>
         </button>
         <div className="bottom-right-actions">
@@ -379,7 +379,7 @@ const App: React.FC = () => {
         <div className="modal-overlay" onClick={() => setShowHistory(false)}>
           <div className="help-modal history-modal" onClick={e => e.stopPropagation()}>
             <div className="history-modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '12px', position: 'relative', minHeight: '40px' }}>
-              <h2 className="history-modal-title" style={{ margin: 0, padding: 0, fontSize: '18px', fontWeight: 'bold', border: 'none', color: '#1e293b', flexShrink: 0, whiteSpace: 'nowrap' }}>案内履歴</h2>
+              <h2 className="history-modal-title" onClick={() => { if (navHistory.length === 0 && undoHistoryRef.current) { setNavHistory(undoHistoryRef.current); undoHistoryRef.current = null; } }} style={{ margin: 0, padding: 0, fontSize: '18px', fontWeight: 'bold', border: 'none', color: '#1e293b', flexShrink: 0, whiteSpace: 'nowrap', cursor: navHistory.length === 0 && undoHistoryRef.current ? 'pointer' : 'default' }}>案内履歴</h2>
               <button className={`toggle-all-history-btn ${showAllHistoryOnMap ? 'active' : 'inactive'}`} onClick={() => setShowAllHistoryOnMap(!showAllHistoryOnMap)} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 {showAllHistoryOnMap ? '一括表示を解除' : 'すべて表示'}
               </button>

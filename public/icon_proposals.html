@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { background: #1e293b; display: flex; flex-direction: column; align-items: center; padding: 40px; gap: 30px; font-family: sans-serif; color: white; }
+    .button-preview {
+      width: 56px; height: 56px; border-radius: 50%; background: white;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="text-align: center;">
+    <div class="button-preview">
+      <!-- 究極シンプル案: ブラケット削除 / 青い丸と「ちょうどいい」格子(4, 20) -->
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- ちょうどいい間隔の格子線 (#94a3b8, 4 と 20) -->
+        <path d="M4 0V24M20 0V24M0 4H24M0 20H24" stroke="#94a3b8" stroke-width="1.0"/>
+        <!-- 中央の青い丸のみ -->
+        <circle cx="12" cy="12" r="3.5" fill="#3b82f6"/>
+      </svg>
+    </div>
+    <p>最終案：丸と格子のみ（48px / ちょうどいい間隔）</p>
+  </div>
+
+</body>
+</html>

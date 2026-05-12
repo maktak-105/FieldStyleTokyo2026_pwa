@@ -317,12 +317,21 @@ const App: React.FC = () => {
         </div>
         <button className="fav-footer-btn" onClick={() => setShowFavoritesList(true)}>★</button>
         <button className="history-btn" onClick={() => setShowHistory(true)}>
-          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 5 18 C 5 2, 12 2, 12 12 S 19 22, 19 6" stroke="#1e293b" strokeWidth="3.2" strokeLinecap="round"/>
+            <circle cx="5" cy="18" r="4" fill="#ef4444" />
+            <circle cx="12" cy="12" r="4" fill="#22c55e" />
+            <circle cx="19" cy="6" r="4" fill="#3b82f6" />
+          </svg>
         </button>
         <div className="bottom-right-actions">
           <button className="help-btn" onClick={() => setShowHelp(true)}>？</button>
           <button className="reset-btn" onClick={resetLayout} style={{ overflow: 'hidden' }}>
-            <img src="/map_home.png" alt="home" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.15)' }} />
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* 確定デザイン: 青い丸と「ちょうどいい」格子 */}
+              <path d="M4 0V24M20 0V24M0 4H24M0 20H24" stroke="#94a3b8" strokeWidth="1.0"/>
+              <circle cx="12" cy="12" r="3.5" fill="#3b82f6"/>
+            </svg>
           </button>
         </div>
       </div>

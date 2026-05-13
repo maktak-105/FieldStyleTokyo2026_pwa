@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 🧭 Guardian V8.0 (完全整合性監査)
+ * 🧭 Guardian V9.0 (完全整合性監査)
  * README.md および GUARDIAN_UI_SPEC.md を基準とする。
  * 
  * [監査対象]
@@ -27,7 +27,7 @@ function audit() {
   const css = fs.readFileSync(FILES.css, 'utf8');
   const help = fs.readFileSync(FILES.help, 'utf8');
 
-  console.log('\x1b[36m%s\x1b[0m', '--- [🧭 Guardian V8.0: 完全整合性監査実行中] ---');
+  console.log('\x1b[36m%s\x1b[0m', '--- [🧭 Guardian V9.0: 完全整合性監査実行中] ---');
 
   const check = (content, target, desc) => {
     if (!content.includes(target)) errors.push(`[!] 監査失敗: "${desc}" (${target}) が見つかりません`);
@@ -48,11 +48,21 @@ function audit() {
   uiMetrics.forEach(item => check(app, item.m, item.d));
 
   // CSS 配置
-  check(css, '32px', '照準（クロスヘア）直径');
-  check(css, 'bottom: 170px', 'お気に入りボタン位置 (170px)');
-  check(css, 'bottom: 100px', '履歴ボタン位置 (100px)');
+  // CSS 配置（クラス名と数値のセットで厳密にチェック）
+  check(css, '.bottom-right-actions {', '右下アクション群コンテナ');
   check(css, 'bottom: 30px', '右下アクション群位置 (30px)');
+  check(css, '.fav-footer-btn {', 'お気に入りボタン定義');
+  check(css, 'bottom: 170px', 'お気に入りボタン位置 (170px)');
+  check(css, '.history-btn {', '履歴ボタン定義');
+  check(css, 'bottom: 100px', '履歴ボタン位置 (100px)');
   check(css, 'gap: 12px', 'プレミアム余白 (gap: 12px)');
+
+  // App.tsx 内のボタン実装監査
+  check(app, 'className="fav-footer-btn"', 'お気に入りボタンの実装');
+  check(app, 'className="history-btn"', '履歴ボタンの実装');
+  check(app, 'className="help-btn"', 'ヘルプボタンの実装');
+  check(app, 'className="reset-btn"', 'リセットボタンの実装');
+  check(css, '32px', '照準（クロスヘア）直径');
 
   // --- 2. 画面機能 & ロジック監査 ---
   console.log('フェーズ2: 画面機能 & ロジック監査...');
@@ -72,22 +82,25 @@ function audit() {
   // --- 3. ヘルプ内容同期監査 ---
   console.log('フェーズ3: ヘルプ内容同期監査...');
 
-  // README からの原文抽出（主要な文言のみ抜粋してチェック）
+  // 全項目チェック（仕様書に定義された1〜8のすべての項目を確認）
   const helpVerbatim = [
-    '上部のタブでフロアを切り替え。',
-    'ブース番号や名称で素早く検索。',
-    '検索窓横のボタンで対象に移動。',
-    '青点線でルートを案内（エスカレータ経由）。',
-    '右下の地図ボタンで全体を表示。'
+    '1. マップ切替', '上部のタブでフロア切替',
+    '2. 検索', 'ブース番号や名称で検索',
+    '3. ジャンプボタン', '対象に移動',
+    '4. お気に入り', 'ボタンで一括表示',
+    '5. ナビゲーション', '青点線でルートを案内',
+    '6. 記号', '●：ブース', '■：エスカレータ/エレベータ', '▲：喫煙所',
+    '7. 地図操作', 'ピンチでズーム、ドラッグで移動',
+    '8.', '全体マップ表示'
   ];
   helpVerbatim.forEach(text => {
-    if (!help.includes(text)) errors.push(`[!] ヘルプ文言エラー: "${text}" が HelpBaseline.tsx に存在しません`);
+    if (!help.includes(text)) errors.push(`[!] ヘルプ構成エラー: "${text}" が HelpBaseline.tsx に存在しません`);
   });
 
-  // 技術スタック
-  const techStack = ['TypeScript', 'React (v19)', 'Vite (v7)', 'PWA', 'Fuse.js', 'Vercel'];
+  // 技術スタック & AIアシスタント
+  const techStack = ['TypeScript', 'React (v19)', 'Vite (v7)', 'PWA', 'Fuse.js', 'Vercel', 'dnd-kit', 'qrcode.react', 'Antigravity', 'Claude Code', 'Copilot 365'];
   techStack.forEach(tech => {
-    if (!help.includes(tech)) errors.push(`[!] 技術スタックエラー: "${tech}" が HelpBaseline.tsx に記載されていません`);
+    if (!help.includes(tech)) errors.push(`[!] 構成要素エラー: "${tech}" が HelpBaseline.tsx に記載されていません`);
   });
 
   // --- 判定結果 ---
@@ -97,7 +110,7 @@ function audit() {
     console.log('\n[!] 実装が最新の仕様（V8.0 / README）から逸脱しています。修正が必要です。');
     process.exit(1);
   } else {
-    console.log('\n\x1b[32m%s\x1b[0m', '✓ [GUARDIAN V8.0] すべての仕様が完全に同期されました。');
+    console.log('\n\x1b[32m%s\x1b[0m', '✓ [GUARDIAN V9.0] すべての仕様が完全に同期されました。');
     process.exit(0);
   }
 }

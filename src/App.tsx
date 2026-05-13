@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import boothsData from './booths.json';
 import { BoothTooltip } from './BoothTooltip';
-import { HelpModal, QRModal, AuthorModal } from './HelpBaseline';
+import { HelpModal, QRModal, AuthorModal, NavigationGuideModal } from './HelpBaseline';
 import Fuse from 'fuse.js';
 
 // Dnd Kit
@@ -98,6 +98,7 @@ const App: React.FC = () => {
   const [showTechInfo, setShowTechInfo] = useState(false);
   const [showLargeQR, setShowLargeQR] = useState(false);
   const [showAuthorModal, setShowAuthorModal] = useState(false);
+  const [showNavGuide, setShowNavGuide] = useState(false);
   const [selectedBooths, setSelectedBooths] = useState<any[]>([]);
 
   const [favorites, setFavorites] = useState<any[]>(() => {
@@ -383,7 +384,7 @@ const App: React.FC = () => {
               <button className={`toggle-all-history-btn ${showAllHistoryOnMap ? 'active' : 'inactive'}`} onClick={() => setShowAllHistoryOnMap(!showAllHistoryOnMap)} style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 {showAllHistoryOnMap ? '一括表示を解除' : 'すべて表示'}
               </button>
-              <button className="clear-history-btn" onClick={() => setShowClearHistoryConfirm(true)} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}>削除</button>
+              <button className="clear-history-btn" onClick={() => setShowClearHistoryConfirm(true)} disabled={navHistory.length === 0} style={{ background: 'none', border: 'none', color: navHistory.length === 0 ? '#cbd5e1' : '#ef4444', fontSize: '13px', fontWeight: 'bold', cursor: navHistory.length === 0 ? 'default' : 'pointer', flexShrink: 0, opacity: navHistory.length === 0 ? 0.5 : 1 }}>削除</button>
             </div>
             <div className="help-content" style={{ maxHeight: '60vh', overflowY: 'auto', position: 'relative' }}>
               {showClearHistoryConfirm && (
@@ -501,9 +502,10 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {showHelp && <HelpModal onClose={() => { setShowHelp(false); setShowTechInfo(false); }} onShowAppInfo={(v) => setShowTechInfo(v)} showAppInfo={showTechInfo} onShowQR={() => setShowLargeQR(true)} onShowAuthor={() => setShowAuthorModal(true)} />}
+      {showHelp && <HelpModal onClose={() => { setShowHelp(false); setShowTechInfo(false); }} onShowAppInfo={(v) => setShowTechInfo(v)} showAppInfo={showTechInfo} onShowQR={() => setShowLargeQR(true)} onShowAuthor={() => setShowAuthorModal(true)} onShowNavGuide={() => setShowNavGuide(true)} />}
       {showAuthorModal && <AuthorModal onClose={() => setShowAuthorModal(false)} />}
       {showLargeQR && <QRModal onClose={() => setShowLargeQR(false)} />}
+      {showNavGuide && <NavigationGuideModal onClose={() => setShowNavGuide(false)} />}
     </div>
   );
 };

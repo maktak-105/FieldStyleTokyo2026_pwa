@@ -134,8 +134,9 @@ npx vercel --prod
 
 ### 📁 ソースコード (`src/`)
 - `App.tsx`: **メインアプリケーション**。UIレイアウト、検索ロジック、ナビゲーション、履歴管理のすべてのコアロジックを統合。
-- `index.css`: **デザイン・スタイルシート**。ベースラインで定義された配色、フォント、および全コンポーネントのレイアウト（スクロール制御等）を定義。
-- `main.tsx`: Reactアプリケーションを起動（マウント）するためのエントリースクリプト。
+- `HelpBaseline.tsx`: **ヘルプ・ガイド画面**。アプリの使い方、技術概要、詳細手順モーダルを分離管理。
+- `index.css`: **デザイン・スタイルシート**。ベースラインで定義された配色、フォント、および全コンポーネントのレイアウトを定義。
+- `main.tsx`: Reactアプリケーションのエントリースクリプト。
 - `booths.json`: **マスターデータ**。全ブース・設備の名称、座標、マップIDを集中管理。
 - `BoothTooltip.tsx`: 地図中央でブース情報を表示する吹き出しコンポーネント。
 - `vite-env.d.ts`: TypeScriptの型定義サポートファイル。
@@ -147,11 +148,19 @@ npx vercel --prod
 - `author.png`: 使い方ガイドに表示される作者プロフィール画像。
 - `favicon.svg`: アプリのアイコン（ファビコン）。PWAインストール時のアイコンとしても使用。
 
-### 📁 開発補助・バックアップ (`scratch/`)
-- `baseline_App.tsx`: UI Baseline確定時の `App.tsx` のバックアップ。破壊的変更からの復旧用。
-- `baseline_index.css`: UI Baseline確定時の `index.css` のバックアップ。
+### 📁 開発補助・スクリプト (`scratch/`)
 - `mark_equipment_v4.py`: `booths.json` の座標データを地図画像上にプロットして検証するためのPythonスクリプト。
-- `before_App.tsx` / `before_index.css`: 修正作業直前のコードの一次退避用。
+- `crop_equipment.py` / `merge_store_list.py`: 座標抽出やデータ統合に使用する補助ツール群。
+
+### 📁 監査システム (`scripts/`)
+- `guardian.cjs`: **仕様適合バリデータ**。コミット時にUI Baselineの数値や文言が仕様書と一致しているかを自動監査。
+
+### 📁 マスター保管庫 (`MASTER_STORAGE/`)
+- `booths.json` (コピー): `src/booths.json` のバックアップ。
+- `MAP1/2MASTER_LAVELED.jpg`: 座標抽出の基準となった、ラベル付きのマスター地図画像。
+
+### 📁 ごみ箱 (`_trash/`)
+- 不要になった古いバックアップ、検証用画像、デザイン案などを一時的に保管。安全に整理するための退避場所。
 
 ---
 
@@ -261,4 +270,4 @@ npx vercel --prod
 
 ---
 Developed by **Antigravity** & **maktak105**.
-Last Updated: 2026-05-12 18:16 (Version 1.1.1)
+Last Updated: 2026-05-13 10:45 (Version 1.2.0)

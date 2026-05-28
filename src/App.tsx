@@ -314,7 +314,7 @@ const App: React.FC = () => {
                 const esc1 = booths.filter(b => b.mapId === currentLocation.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - currentLocation.x, a.y - currentLocation.y) - Math.hypot(b.x - currentLocation.x, b.y - currentLocation.y))[0];
                 const esc2 = booths.filter(b => b.mapId === destination.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - destination.x, a.y - destination.y) - Math.hypot(b.x - destination.x, b.y - destination.y))[0];
                 if (currentLocation.mapId === activeMap && esc1) return <line x1={currentLocation.x} y1={currentLocation.y} x2={esc1.x} y2={esc1.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
-                if (destination.mapId === activeMap && esc2) return <line x1={esc2.x} y1={esc2.y} x2={e.x} y2={e.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
+                if (destination.mapId === activeMap && esc2) return <line x1={esc2.x} y1={esc2.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
               }
               return null;
             })()}

@@ -124,14 +124,6 @@ body, html {
 .history-list { display: flex; flex-direction: column; }
 .history-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 .history-item:active { background: #f1f5f9; }
-.history-route { display: flex; flex-direction: column; gap: 4px; }
-.history-point { display: flex; align-items: center; gap: 8px; }
-.history-point .dot { width: 8px; height: 8px; border-radius: 50%; }
-.history-point .dot.red { background: #ef4444; }
-.history-point .dot.blue { background: #3b82f6; }
-.history-point .name { font-size: 0.9rem; font-weight: 600; color: #1e293b; }
-.history-time { font-size: 0.7rem; color: #94a3b8; font-weight: 500; }
-.clear-history-btn { background: #fee2e2; color: #ef4444; border: none; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
 
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -153,12 +145,6 @@ body, html {
 .fav-toggle-btn:active { transform: scale(1.2); }
 .fav-toggle-btn.active { color: #f59e0b; }
 .fav-toggle-btn.inactive { color: #cbd5e1; }
-
-.fav-list-item { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
-.fav-list-item.all-show { color: #f59e0b; border-bottom: 2px solid #f1f5f9; background: #fffbeb; }
-.fav-star-icon { color: #f59e0b; font-size: 1.2rem; }
-.fav-remove-btn { background: #ef4444; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: auto; flex-shrink: 0; }
-.fav-remove-btn::before { content: ""; display: block; width: 12px; height: 2px; background: white; border-radius: 1px; }
 
 .qr-mini-btn { background: white; border: 1px solid #e2e8f0; padding: 4px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .qr-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 40000; padding: 20px; backdrop-filter: blur(8px); }
@@ -184,9 +170,13 @@ body, html {
   padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px;
 }
 .history-modal-title { margin: 0; font-size: 1.2rem; flex: 1; text-align: left; }
-.history-modal-center { flex: 1; display: flex; justify-content: center; align-items: center; }
 .toggle-all-history-btn { white-space: nowrap; }
 .clear-history-btn { flex: 1; text-align: right; background: none; border: none; color: #ef4444; font-weight: bold; cursor: pointer; }
+
+.app-info-section { margin-top: 12px; font-size: 13px; color: #334155; }
+.app-info-section h3 { font-size: 14px; font-weight: 800; color: #1e293b; margin: 8px 0 4px; }
+.app-info-section h4 { font-size: 12px; font-weight: 700; color: #64748b; margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.app-info-section ul { padding-left: 16px; display: flex; flex-direction: column; gap: 3px; }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.98); }

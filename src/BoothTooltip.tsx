@@ -1,4 +1,5 @@
 import React from 'react';
+import { getBoothNo } from './utils';
 
 interface BoothTooltipProps {
   booths: any[];
@@ -7,13 +8,6 @@ interface BoothTooltipProps {
 
 export const BoothTooltip: React.FC<BoothTooltipProps> = ({ booths, onSelect }) => {
   if (!booths || booths.length === 0) return null;
-
-  const getBoothNo = (b: any) => {
-    if (!b) return '';
-    const exclude = ['mapId', 'x', 'y', '__EMPTY', 'x_pixel', 'y_pixel'];
-    const key = Object.keys(b).find(k => !exclude.includes(k));
-    return key ? String(b[key]) : '';
-  };
 
   // ブース番号でグループ化
   const groups: { [key: string]: any[] } = {};

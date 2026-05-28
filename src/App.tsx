@@ -3,6 +3,7 @@ import boothsData from './booths.json';
 import { BoothTooltip } from './BoothTooltip';
 import { HelpModal, QRModal, AuthorModal, NavigationGuideModal } from './HelpBaseline';
 import Fuse from 'fuse.js';
+import { getBoothNo } from './utils';
 
 // Dnd Kit
 import {
@@ -116,7 +117,6 @@ const App: React.FC = () => {
 
   const mapCanvasRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
   const undoHistoryRef = useRef<any[] | null>(null);
 
   const fuse = useMemo(() => new Fuse(booths, {
@@ -124,7 +124,7 @@ const App: React.FC = () => {
     threshold: 0.4,
     distance: 100,
     minMatchCharLength: 1
-  }), [booths]);
+  }), []);
 
   useEffect(() => { localStorage.setItem('fs2026_favorites', JSON.stringify(favorites)); }, [favorites]);
   useEffect(() => { localStorage.setItem('fieldstyle_nav_history_v10', JSON.stringify(navHistory)); }, [navHistory]);
@@ -187,13 +187,6 @@ const App: React.FC = () => {
       setOffset(o => ({ x: o.x + (t.clientX - lastPos.x), y: o.y + (t.clientY - lastPos.y) }));
       setLastPos({ x: t.clientX, y: t.clientY });
     }
-  };
-
-  const getBoothNo = (b: any) => {
-    if (!b) return '';
-    const exclude = ['mapId', 'x', 'y', '__EMPTY', 'x_pixel', 'y_pixel'];
-    const key = Object.keys(b).find(k => !exclude.includes(k));
-    return key ? String(b[key]) : '';
   };
 
   const handleSearch = (query: string, setResults: React.Dispatch<React.SetStateAction<any[]>>) => {
@@ -339,7 +332,7 @@ const App: React.FC = () => {
       </div>
 
       <div className="ui-layer">
-        <div className="header-card" ref={headerRef}>
+        <div className="header-card">
           <div className="map-tabs">
             <button className={`map-tab ${activeMap === 'map1' ? 'active' : ''}`} onClick={() => setActiveMap('map1')}>西1・2 【1F】</button>
             <button className={`map-tab ${activeMap === 'map2' ? 'active' : ''}`} onClick={() => setActiveMap('map2')}>西3・4・南3 【4F】</button>

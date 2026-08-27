@@ -1,5 +1,6 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { MessageSquare } from 'lucide-react';
 
 export const HelpModal: React.FC<{
   onClose: () => void,
@@ -7,8 +8,9 @@ export const HelpModal: React.FC<{
   showAppInfo: boolean,
   onShowQR: (v: boolean) => void,
   onShowAuthor: (v: boolean) => void,
-  onShowNavGuide: () => void
-}> = ({ onClose, onShowAppInfo, showAppInfo, onShowQR, onShowAuthor, onShowNavGuide }) => {
+  onShowNavGuide: () => void,
+  onShowFeedback: () => void
+}> = ({ onClose, onShowAppInfo, showAppInfo, onShowQR, onShowAuthor, onShowNavGuide, onShowFeedback }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="help-modal" onClick={e => e.stopPropagation()}>
@@ -71,7 +73,6 @@ export const HelpModal: React.FC<{
                   <li><b>qrcode.react</b>: 共有用QRコード生成</li>
                   <li><b>PWA</b>: オフライン・インストール機能</li>
                   <li><b>Fuse.js</b>: 高速あいまい検索エンジン</li>
-                  <li><b>react-quick-pinch-zoom</b>: 地図操作</li>
                   <li><b>Lucide React</b>: アイコン</li>
                   <li><b>Pillow (PIL)</b>: 画像処理用補助</li>
                 </ul>
@@ -89,6 +90,10 @@ export const HelpModal: React.FC<{
               </div>
             )}
           </div>
+          <button className="feedback-help-btn" onClick={onShowFeedback}>
+            <MessageSquare size={16} />
+            フィードバックを送る
+          </button>
         </div>
 
         <button className="help-close" onClick={onClose}>閉じる</button>

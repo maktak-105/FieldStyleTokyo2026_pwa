@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import boothsData from './booths.json';
 import { BoothTooltip } from './BoothTooltip';
 import { HelpModal, QRModal, AuthorModal, NavigationGuideModal } from './HelpBaseline';
+import { FeedbackForm } from './components/FeedbackForm';
 import Fuse from 'fuse.js';
 import { getBoothNo } from './utils';
 
@@ -100,6 +101,7 @@ const App: React.FC = () => {
   const [showLargeQR, setShowLargeQR] = useState(false);
   const [showAuthorModal, setShowAuthorModal] = useState(false);
   const [showNavGuide, setShowNavGuide] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   const [selectedBooths, setSelectedBooths] = useState<any[]>([]);
 
   const [favorites, setFavorites] = useState<any[]>(() => {
@@ -495,10 +497,11 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {showHelp && <HelpModal onClose={() => { setShowHelp(false); setShowTechInfo(false); }} onShowAppInfo={(v) => setShowTechInfo(v)} showAppInfo={showTechInfo} onShowQR={() => setShowLargeQR(true)} onShowAuthor={() => setShowAuthorModal(true)} onShowNavGuide={() => setShowNavGuide(true)} />}
+      {showHelp && <HelpModal onClose={() => { setShowHelp(false); setShowTechInfo(false); }} onShowAppInfo={(v) => setShowTechInfo(v)} showAppInfo={showTechInfo} onShowQR={() => setShowLargeQR(true)} onShowAuthor={() => setShowAuthorModal(true)} onShowNavGuide={() => setShowNavGuide(true)} onShowFeedback={() => setShowFeedback(true)} />}
       {showAuthorModal && <AuthorModal onClose={() => setShowAuthorModal(false)} />}
       {showLargeQR && <QRModal onClose={() => setShowLargeQR(false)} />}
       {showNavGuide && <NavigationGuideModal onClose={() => setShowNavGuide(false)} />}
+      {showFeedback && <FeedbackForm onClose={() => setShowFeedback(false)} />}
     </div>
   );
 };

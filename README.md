@@ -62,7 +62,7 @@ FieldStyle Japan 2026 会場（東京ビッグサイト）向けの、スマー�
 
 ### 6. 案内履歴機能
 - **巡回ルート案内**: 履歴リストに基づき、地図上に巡回ルートを一括表示。
-- **詳細仕様と監査基準**: 本機能の詳細な UI およびロジックの仕様は、[ROUTE_NAVIGATION_HISTORY_SPEC.md](file:///c:/Users/0120025-Z100/source/project/FieldStyle2026/docs/specifications/ROUTE_NAVIGATION_HISTORY_SPEC.md) に記載の通りとする。Guardian 監査システムは同ファイルの内容を正典として検証を行う。
+- **詳細仕様**: 本機能の詳細な UI およびロジックの仕様は、[ROUTE_NAVIGATION_HISTORY_SPEC.md](file:///c:/Users/0120025-Z100/source/project/FieldStyle2026/docs/specifications/ROUTE_NAVIGATION_HISTORY_SPEC.md) に記載の通りとする。
 
 ### 7. マップインジケータ（照準）機能
 - **センタークロスヘア**: 地図を一定以上拡大すると、画面中央に照準ガイドが表示されます。
@@ -151,9 +151,6 @@ npx vercel --prod
 ### 📁 開発補助・スクリプト (`scratch/`)
 - `mark_equipment_v4.py`: `booths.json` の座標データを地図画像上にプロットして検証するためのPythonスクリプト。
 - `crop_equipment.py` / `merge_store_list.py`: 座標抽出やデータ統合に使用する補助ツール群。
-
-### 📁 監査システム (`scripts/`)
-- `guardian.cjs`: **仕様適合バリデータ**。コミット時にUI Baselineの数値や文言が仕様書と一致しているかを自動監査。
 
 ### 📁 マスター保管庫 (`MASTER_STORAGE/`)
 - `booths.json` (コピー): `src/booths.json` のバックアップ。

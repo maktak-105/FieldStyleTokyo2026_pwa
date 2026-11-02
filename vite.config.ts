@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'map1.jpg', 'map2.jpg', 'author.png', 'pwa-192x192.png', 'pwa-512x512.png', 'apple-touch-icon.png'],
+      includeAssets: ['assets/favicon.svg', 'assets/map1.jpg', 'assets/map2.jpg', 'assets/author.png', 'assets/pwa-192x192.png', 'assets/pwa-512x512.png', 'assets/apple-touch-icon.png'],
       manifest: {
         name: 'FieldStyle Japan 2026 Navigator',
         short_name: 'FieldStyle',
@@ -18,12 +18,12 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'assets/pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'assets/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'

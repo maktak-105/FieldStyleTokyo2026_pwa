@@ -16,7 +16,7 @@ export const HelpModal: React.FC<{
       <div className="help-modal" onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', position: 'relative', minHeight: '44px' }}>
           <img
-            src="/author.png"
+            src="/assets/author.png"
             alt="author"
             className="author-img-mini"
             onClick={() => onShowAuthor(true)}
@@ -118,7 +118,7 @@ export const QRModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
 export const AuthorModal: React.FC<{ onClose: () => void }> = ({ onClose }) => (
   <div className="modal-overlay" onClick={onClose} style={{ zIndex: 50000 }}>
     <div className="author-large-container" onClick={e => e.stopPropagation()}>
-      <img src="/author.png" alt="author" className="author-img-large" />
+      <img src="/assets/author.png" alt="author" className="author-img-large" />
       <button className="help-close" onClick={onClose}>閉じる</button>
     </div>
   </div>

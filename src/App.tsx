@@ -285,7 +285,7 @@ const App: React.FC = () => {
     <div className="app-container">
       <div className="map-canvas" ref={mapCanvasRef} onWheel={handleWheel} onMouseDown={handleStart} onMouseMove={handleMove} onMouseUp={() => setIsDragging(false)} onTouchStart={handleStart} onTouchMove={handleMove} onTouchEnd={() => setIsDragging(false)} style={{ touchAction: 'none' }}>
         <div style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`, transformOrigin: '0 0', position: 'relative' }}>
-          <img ref={imgRef} src={activeMap === 'map1' ? '/map1.jpg' : '/map2.jpg'} alt="map" draggable="false" onLoad={resetLayout} style={{ display: 'block', maxWidth: 'none' }} />
+          <img ref={imgRef} src={activeMap === 'map1' ? '/assets/map1.jpg' : '/assets/map2.jpg'} alt="map" draggable="false" onLoad={resetLayout} style={{ display: 'block', maxWidth: 'none' }} />
           <svg viewBox={`0 0 ${currentSize.w} ${currentSize.h}`} style={{ position: 'absolute', top: 0, left: 0, width: currentSize.w, height: currentSize.h, pointerEvents: 'none' }}>
             <defs><marker id="arrowhead" markerWidth="5" markerHeight="3.5" refX="4" refY="1.75" orient="auto"><polygon points="0 0, 5 1.75, 0 3.5" fill="#1d4ed8" /></marker></defs>
             {showAllHistoryOnMap && visibleHistoryBooths.length > 1 && visibleHistoryBooths.slice(0, -1).map((h, i) => {

@@ -141,12 +141,12 @@ npx vercel --prod
 - `BoothTooltip.tsx`: 地図中央でブース情報を表示する吹き出しコンポーネント。
 - `vite-env.d.ts`: TypeScriptの型定義サポートファイル。
 
-### 📁 静的アセット (`public/`)
+### 📁 静的アセット (`public/assets/`)
 - `map1.jpg`: 西展示棟1F（西1・2）の地図画像。
 - `map2.jpg`: 西展示棟3・4・南3（4F）の地図画像。
-- `map_home.png`: 画面右下の「リセット（全体表示）」ボタン用アイコン。
 - `author.png`: 使い方ガイドに表示される作者プロフィール画像。
 - `favicon.svg`: アプリのアイコン（ファビコン）。PWAインストール時のアイコンとしても使用。
+- `apple-touch-icon.png` / `pwa-192x192.png` / `pwa-512x512.png`: PWAインストール時の各種アイコン。
 
 ### 📁 開発補助・スクリプト (`scratch/`)
 - `mark_equipment_v4.py`: `booths.json` の座標データを地図画像上にプロットして検証するためのPythonスクリプト。
@@ -155,9 +155,6 @@ npx vercel --prod
 ### 📁 マスター保管庫 (`MASTER_STORAGE/`)
 - `booths.json` (コピー): `src/booths.json` のバックアップ。
 - `MAP1/2MASTER_LAVELED.jpg`: 座標抽出の基準となった、ラベル付きのマスター地図画像。
-
-### 📁 ごみ箱 (`_trash/`)
-- 不要になった古いバックアップ、検証用画像、デザイン案などを一時的に保管。安全に整理するための退避場所。
 
 ---
 
@@ -193,9 +190,8 @@ npx vercel --prod
 ---
 
 ## 📂 アセット一覧
-- 地図画像: `public/map1.jpg`, `public/map2.jpg`
-- 地図ボタンアイコン: `public/map_home.png`
-- 作者画像: `public/author.png`
+- 地図画像: `public/assets/map1.jpg`, `public/assets/map2.jpg`
+- 作者画像: `public/assets/author.png`
 
 ---
 

@@ -35,7 +35,7 @@ export const HelpModal: React.FC<{
           </button>
         </div>
         <div className="help-content">
-          <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※ホーム画面に追加すると一発起動できます</span><br /><br />
+          <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※一度読み込めば電波が届かない場所でも使えます</span><br /><br />
           <b>1. マップ切替</b>: 上部のタブでフロア切替<br />
           <b>2. 検索</b>: ブース番号や名称で検索<br />
           <b>3. ジャンプボタン</b>: <span style={{ display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', background: '#ef4444', border: '1.5px solid white', boxShadow: '0 1px 2px rgba(0,0,0,0.2)', verticalAlign: 'middle', marginRight: '1px' }}></span><span style={{ display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', background: '#3b82f6', border: '1.5px solid white', boxShadow: '0 1px 2px rgba(0,0,0,0.2)', verticalAlign: 'middle', marginRight: '4px' }}></span>対象に移動<br />
@@ -48,6 +48,7 @@ export const HelpModal: React.FC<{
           　▲：喫煙所<br />
           <b>7. 地図操作</b>: ピンチでズーム、ドラッグで移動<br />
           <b>8. <svg viewBox="0 0 24 24" width="20" height="20" fill="none" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '2px' }}><path d="M4 0V24M20 0V24M0 4H24M0 20H24" stroke="#94a3b8" strokeWidth="1.5" /><circle cx="12" cy="12" r="3.5" fill="#3b82f6" /></svg> ボタン</b>: 全体マップ表示<br /><br />
+          <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※ホーム画面に追加すると一発起動できます</span><br />
           ※Webアプリです、ブラウザキャッシュを約3MB使います、個人情報は一切収集してません
 
           <div style={{ marginTop: '16px', borderTop: '1px dashed #e2e8f0', paddingTop: '12px' }}>
@@ -76,9 +77,10 @@ export const HelpModal: React.FC<{
                   <li><b>Lucide React</b>: アイコン</li>
                   <li><b>Pillow (PIL)</b>: 画像処理用補助</li>
                 </ul>
-                <h4>インフラ・運用</h4>
+                <h4>インフラ・バックエンド</h4>
                 <ul>
-                  <li><b>Vercel</b>: ホスティング・高速化・利用解析</li>
+                  <li><b>Vercel</b>: 高速エッジホスティング・利用解析</li>
+                  <li><b>Google Apps Script (GAS)</b>: フィードバック受信用サーバーレス連携</li>
                   <li><b>GitHub</b>: ソースコード管理</li>
                 </ul>
                 <h4>AI アシスタント</h4>

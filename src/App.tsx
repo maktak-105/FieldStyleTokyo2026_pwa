@@ -280,7 +280,7 @@ const App: React.FC = () => {
   };
 
   const GATEWAY_MAP1 = { x: 2428.0, y: 1151.0, mapId: 'map1' }; // 屋内屋外出入口
-  const GATEWAY_MAP2 = { x: 212.5, y: 1094.5, mapId: 'map2' };  // 屋外出入口
+  const GATEWAY_MAP2 = { x: 101.0, y: 1532.0, mapId: 'map2' };  // 屋外出入口 (赤⇔)
   const DEST_CENTER   = { x: 919.5, y: 335.5, mapId: 'map1' };   // DESTINATION AICHI 中央
 
   const renderRoute = (s: any, e: any, keyPrefix = '') => {

@@ -88,7 +88,7 @@ const App: React.FC = () => {
 
   const [showHistory, setShowHistory] = useState(false);
   const [showAllHistoryOnMap, setShowAllHistoryOnMap] = useState(false);
-  const [activeMap, setActiveMap] = useState<'map1' | 'map2'>('map1');
+  const [activeMap, setActiveMap] = useState<'map1' | 'map2' | 'map3'>('map1');
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -285,7 +285,7 @@ const App: React.FC = () => {
     <div className="app-container">
       <div className="map-canvas" ref={mapCanvasRef} onWheel={handleWheel} onMouseDown={handleStart} onMouseMove={handleMove} onMouseUp={() => setIsDragging(false)} onTouchStart={handleStart} onTouchMove={handleMove} onTouchEnd={() => setIsDragging(false)} style={{ touchAction: 'none' }}>
         <div style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`, transformOrigin: '0 0', position: 'relative' }}>
-          <img ref={imgRef} src={activeMap === 'map1' ? '/assets/map1.jpg' : '/assets/map2.jpg'} alt="map" draggable="false" onLoad={resetLayout} style={{ display: 'block', maxWidth: 'none' }} />
+          <img ref={imgRef} src={activeMap === 'map1' ? '/assets/map1.jpg' : (activeMap === 'map2' ? '/assets/map2.jpg' : '/assets/map3.jpg')} alt="map" draggable="false" onLoad={resetLayout} style={{ display: 'block', maxWidth: 'none' }} />
           <svg viewBox={`0 0 ${currentSize.w} ${currentSize.h}`} style={{ position: 'absolute', top: 0, left: 0, width: currentSize.w, height: currentSize.h, pointerEvents: 'none' }}>
             <defs><marker id="arrowhead" markerWidth="5" markerHeight="3.5" refX="4" refY="1.75" orient="auto"><polygon points="0 0, 5 1.75, 0 3.5" fill="#1d4ed8" /></marker></defs>
             {showAllHistoryOnMap && visibleHistoryBooths.length > 1 && visibleHistoryBooths.slice(0, -1).map((h, i) => {
@@ -336,8 +336,9 @@ const App: React.FC = () => {
       <div className="ui-layer">
         <div className="header-card">
           <div className="map-tabs">
-            <button className={`map-tab ${activeMap === 'map1' ? 'active' : ''}`} onClick={() => setActiveMap('map1')}>西1・2 【1F】</button>
-            <button className={`map-tab ${activeMap === 'map2' ? 'active' : ''}`} onClick={() => setActiveMap('map2')}>西3・4・南3 【4F】</button>
+            <button className={`map-tab ${activeMap === 'map1' ? 'active' : ''}`} onClick={() => setActiveMap('map1')}>屋内 (C-F)</button>
+            <button className={`map-tab ${activeMap === 'map2' ? 'active' : ''}`} onClick={() => setActiveMap('map2')}>屋外</button>
+            <button className={`map-tab ${activeMap === 'map3' ? 'active' : ''}`} onClick={() => setActiveMap('map3')}>DESTINATION</button>
           </div>
           <div className="location-picker">
             {[{ id: 'A', label: '現在地', val: inputA, set: setInputA, res: resultsA, setRes: setResultsA, cur: currentLocation, setCur: setCurrentLocation, bg: 'red-bg' },

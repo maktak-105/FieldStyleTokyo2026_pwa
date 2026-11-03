@@ -279,7 +279,106 @@ const App: React.FC = () => {
     return <path d={starPath} fill="#f59e0b" stroke="white" strokeWidth={3 / scale} />;
   };
 
-  const visibleHistoryBooths = navHistory.filter(h => h && h.visible && h.booth);
+  const GATEWAY_MAP1 = { x: 2428.0, y: 1151.0, mapId: 'map1' }; // 屋内屋外出入口
+  const GATEWAY_MAP2 = { x: 212.5, y: 1094.5, mapId: 'map2' };  // 屋外出入口
+  const DEST_CENTER   = { x: 919.5, y: 335.5, mapId: 'map1' };   // DESTINATION AICHI 中央
+
+  const renderRoute = (s: any, e: any, keyPrefix = '') => {
+    if (!s || !e) return null;
+    const strokeWidth = 10 / scale;
+    const strokeDasharray = `${20 / scale}, ${20 / scale}`;
+
+    // 同一マップ内の移動
+    if (s.mapId === e.mapId && s.mapId === activeMap) {
+      return (
+        <line
+          key={`${keyPrefix}-same`}
+          x1={s.x} y1={s.y} x2={e.x} y2={e.y}
+          stroke="#1d4ed8" strokeWidth={strokeWidth} strokeDasharray={strokeDasharray}
+          markerEnd="url(#arrowhead)"
+        />
+      );
+    }
+
+    const isDest = (b: any) => b.mapId === 'map3' || b['ブース番号'] === 'DESTINATION' || b['ホール'] === 'DESTINATION AICHI';
+
+    // 1. Destination（map3またはDESTINATION企画）が絡む移動
+    if (isDest(s) || isDest(e)) {
+      const fromMap2 = s.mapId === 'map2';
+      const toMap2 = e.mapId === 'map2';
+
+      if (fromMap2 || toMap2) {
+        // 屋外(map2)にいる場合: 屋外出入口(GATEWAY_MAP2)と結ぶ
+        if (activeMap === 'map2') {
+          const [p1, p2] = fromMap2 ? [s, GATEWAY_MAP2] : [GATEWAY_MAP2, e];
+          return (
+            <line
+              key={`${keyPrefix}-out-dest`}
+              x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+              stroke="#1d4ed8" strokeWidth={strokeWidth} strokeDasharray={strokeDasharray}
+              markerEnd="url(#arrowhead)"
+            />
+          );
+        }
+        // 屋内(map1)にいる場合: 屋外連絡口(GATEWAY_MAP1)とDESTINATION中央を結ぶ
+        if (activeMap === 'map1') {
+          const [p1, p2] = fromMap2 ? [GATEWAY_MAP1, DEST_CENTER] : [DEST_CENTER, GATEWAY_MAP1];
+          return (
+            <line
+              key={`${keyPrefix}-in-dest-trans`}
+              x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+              stroke="#1d4ed8" strokeWidth={strokeWidth} strokeDasharray={strokeDasharray}
+              markerEnd="url(#arrowhead)"
+            />
+          );
+        }
+      } else {
+        // 屋内(map1)とDestinationの間の移動
+        if (activeMap === 'map1') {
+          const [p1, p2] = isDest(e) ? [s, DEST_CENTER] : [DEST_CENTER, e];
+          return (
+            <line
+              key={`${keyPrefix}-in-dest`}
+              x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+              stroke="#1d4ed8" strokeWidth={strokeWidth} strokeDasharray={strokeDasharray}
+              markerEnd="url(#arrowhead)"
+            />
+          );
+        }
+      }
+      return null;
+    }
+
+    // 2. 屋内(map1) <-> 屋外(map2) の移動
+    if ((s.mapId === 'map1' && e.mapId === 'map2') || (s.mapId === 'map2' && e.mapId === 'map1')) {
+      if (activeMap === 'map1') {
+        const [p1, p2] = s.mapId === 'map1' ? [s, GATEWAY_MAP1] : [GATEWAY_MAP1, e];
+        return (
+          <line
+            key={`${keyPrefix}-in-trans`}
+            x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+            stroke="#1d4ed8" strokeWidth={strokeWidth} strokeDasharray={strokeDasharray}
+            markerEnd="url(#arrowhead)"
+          />
+        );
+      }
+      if (activeMap === 'map2') {
+        const [p1, p2] = s.mapId === 'map2' ? [s, GATEWAY_MAP2] : [GATEWAY_MAP2, e];
+        return (
+          <line
+            key={`${keyPrefix}-out-trans`}
+            x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+            stroke="#1d4ed8" strokeWidth={strokeWidth} strokeDasharray={strokeDasharray}
+            markerEnd="url(#arrowhead)"
+          />
+        );
+      }
+    }
+
+    return null;
+  };
+
+    const visibleHistoryBooths = navHistory.filter(h => h && h.visible && h.booth);
 
   return (
     <div className="app-container">
@@ -288,31 +387,12 @@ const App: React.FC = () => {
           <img ref={imgRef} src={activeMap === 'map1' ? '/assets/map1.jpg' : (activeMap === 'map2' ? '/assets/map2.jpg' : '/assets/map3.jpg')} alt="map" draggable="false" onLoad={resetLayout} style={{ display: 'block', maxWidth: 'none' }} />
           <svg viewBox={`0 0 ${currentSize.w} ${currentSize.h}`} style={{ position: 'absolute', top: 0, left: 0, width: currentSize.w, height: currentSize.h, pointerEvents: 'none' }}>
             <defs><marker id="arrowhead" markerWidth="5" markerHeight="3.5" refX="4" refY="1.75" orient="auto"><polygon points="0 0, 5 1.75, 0 3.5" fill="#1d4ed8" /></marker></defs>
-            {showAllHistoryOnMap && visibleHistoryBooths.length > 1 && visibleHistoryBooths.slice(0, -1).map((h, i) => {
-              const s = h.booth; const e = visibleHistoryBooths[i + 1]?.booth;
-              const isTrans = (b: any) => b['__EMPTY']?.includes('エスカレータ');
-              if (s.mapId === e.mapId) {
-                if (s.mapId === activeMap) return <line key={i} x1={s.x} y1={s.y} x2={e.x} y2={e.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
-              } else {
-                const esc1 = booths.filter(b => b.mapId === s.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - s.x, a.y - s.y) - Math.hypot(b.x - s.x, b.y - s.y))[0];
-                const esc2 = booths.filter(b => b.mapId === e.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))[0];
-                if (s.mapId === activeMap && esc1) return <line key={i} x1={s.x} y1={s.y} x2={esc1.x} y2={esc1.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
-                if (e.mapId === activeMap && esc2) return <line key={i} x1={esc2.x} y1={esc2.y} x2={e.x} y2={e.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
-              }
-              return null;
-            })}
-            {!showAllHistoryOnMap && currentLocation && destination && (() => {
-              const isTrans = (b: any) => b['__EMPTY']?.includes('エスカレータ');
-              if (currentLocation.mapId === destination.mapId) {
-                if (currentLocation.mapId === activeMap) return <line x1={currentLocation.x} y1={currentLocation.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
-              } else {
-                const esc1 = booths.filter(b => b.mapId === currentLocation.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - currentLocation.x, a.y - currentLocation.y) - Math.hypot(b.x - currentLocation.x, b.y - currentLocation.y))[0];
-                const esc2 = booths.filter(b => b.mapId === destination.mapId && isTrans(b)).sort((a, b) => Math.hypot(a.x - destination.x, a.y - destination.y) - Math.hypot(b.x - destination.x, b.y - destination.y))[0];
-                if (currentLocation.mapId === activeMap && esc1) return <line x1={currentLocation.x} y1={currentLocation.y} x2={esc1.x} y2={esc1.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
-                if (destination.mapId === activeMap && esc2) return <line x1={esc2.x} y1={esc2.y} x2={destination.x} y2={destination.y} stroke="#1d4ed8" strokeWidth={10 / scale} strokeDasharray={`${20 / scale}, ${20 / scale}`} markerEnd="url(#arrowhead)" />;
-              }
-              return null;
-            })()}
+            {showAllHistoryOnMap && visibleHistoryBooths.length > 1 && visibleHistoryBooths.slice(0, -1).map((h, i) => (
+              renderRoute(h.booth, visibleHistoryBooths[i + 1]?.booth, `hist-${i}`)
+            ))}
+            {!showAllHistoryOnMap && currentLocation && destination && (
+              renderRoute(currentLocation, destination, 'nav')
+            )}
             {showAllHistoryOnMap && visibleHistoryBooths.map((h, i) => {
               if (h.booth.mapId !== activeMap) return null;
               const color = i === 0 ? "#FF0000" : (i === visibleHistoryBooths.length - 1 ? "#0000FF" : "#00FF00");

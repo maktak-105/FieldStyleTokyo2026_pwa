@@ -36,7 +36,7 @@ export const HelpModal: React.FC<{
         </div>
         <div className="help-content">
           <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※一度読み込めば電波が届かない場所でも使えます</span><br /><br />
-          <b>1. マップ切替</b>: 上部のタブでフロア切替<br />
+          <b>1. マップ切替</b>: 上部のタブでエリア切替<br />
           <b>2. 検索</b>: ブース番号や名称で検索<br />
           <b>3. ジャンプボタン</b>: <span style={{ display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', background: '#ef4444', border: '1.5px solid white', boxShadow: '0 1px 2px rgba(0,0,0,0.2)', verticalAlign: 'middle', marginRight: '1px' }}></span><span style={{ display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', background: '#3b82f6', border: '1.5px solid white', boxShadow: '0 1px 2px rgba(0,0,0,0.2)', verticalAlign: 'middle', marginRight: '4px' }}></span>対象に移動<br />
           <b>4. お気に入り</b>: ☆★ボタンで登録し、<span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', borderRadius: '50%', background: '#f59e0b', border: '1.5px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', color: 'white', fontSize: '12px', fontWeight: 'bold', marginRight: '2px' }}>★</span>ボタンで一括表示<br />
@@ -44,8 +44,7 @@ export const HelpModal: React.FC<{
           　<span onClick={onShowNavGuide} style={{ color: '#3b82f6', textDecoration: 'underline', cursor: 'pointer', fontSize: '13px' }}>使い方</span><br />
           <b>6. 記号</b>:<br />
           　●：ブース<br />
-          　■：エスカレータ/エレベータ<br />
-          　▲：喫煙所<br />
+          　<span style={{ color: '#ef4444', fontSize: '12px' }}>※ 2026秋バージョンは、喫煙所、エスカレータ、エレベータはガイドに入れていません。</span><br />
           <b>7. 地図操作</b>: ピンチでズーム、ドラッグで移動<br />
           <b>8. <svg viewBox="0 0 24 24" width="20" height="20" fill="none" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '2px' }}><path d="M4 0V24M20 0V24M0 4H24M0 20H24" stroke="#94a3b8" strokeWidth="1.5" /><circle cx="12" cy="12" r="3.5" fill="#3b82f6" /></svg> ボタン</b>: 全体マップ表示<br /><br />
           <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>※ホーム画面に追加すると一発起動できます</span><br />

@@ -5,8 +5,6 @@
  * GAS は e.parameter.message の追記だけにし、シートの中身は返さない。
  */
 
-import type { IncomingMessage, ServerResponse } from 'node:http';
-
 const MAX_MESSAGE_LENGTH = 500;
 const ALLOWED_HOST = 'script.google.com';
 
@@ -116,7 +114,18 @@ function normalizeBody(body: unknown): unknown {
   }
 }
 
-export function applyResult(res: ServerResponse, result: FeedbackResult) {
+type FeedbackResponse = {
+  statusCode: number;
+  setHeader: (name: string, value: string) => void;
+  end: (body: string) => void;
+};
+
+type FeedbackRequest = {
+  method?: string;
+  body?: unknown;
+};
+
+export function applyResult(res: FeedbackResponse, result: FeedbackResult) {
   res.statusCode = result.status;
   if (result.allow) res.setHeader('Allow', result.allow);
   res.setHeader('Cache-Control', 'no-store');
@@ -124,9 +133,10 @@ export function applyResult(res: ServerResponse, result: FeedbackResult) {
   res.end(JSON.stringify(result.json));
 }
 
-export default async function handler(req: IncomingMessage & { body?: unknown }, res: ServerResponse) {
+export default async function handler(req: FeedbackRequest, res: FeedbackResponse) {
   const body = req.method === 'POST' ? normalizeBody(req.body) : undefined;
-  const target = feedbackTarget(process.env.FEEDBACK_URL);
+  const env = (globalThis as { process?: { env?: { FEEDBACK_URL?: string } } }).process?.env?.FEEDBACK_URL;
+  const target = feedbackTarget(env);
   const result = await runFeedback(req.method, body, target);
   applyResult(res, result);
 }

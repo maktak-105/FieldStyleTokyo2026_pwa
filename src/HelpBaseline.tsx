@@ -79,7 +79,7 @@ export const HelpModal: React.FC<{
                 <h4>インフラ・バックエンド</h4>
                 <ul>
                   <li><b>Vercel</b>: 高速エッジホスティング・利用解析</li>
-                  <li><b>Google Apps Script (GAS)</b>: フィードバック受信用サーバーレス連携</li>
+                  <li><b>フィードバック API</b>: 同一オリジンで受け、送信先はサーバー側の環境変数のみ</li>
                   <li><b>GitHub</b>: ソースコード管理</li>
                 </ul>
                 <h4>AI アシスタント</h4>

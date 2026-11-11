@@ -88,6 +88,7 @@ FieldStyle Expo 2026 会場（AICHI SKY EXPO / 愛知国際展示場）向けの
 
 ### インフラ・運用
 - **Vercel**: ホスティング、アナリティクス、自動デプロイ。
+- **フィードバック**: 送信先は Vercel の環境変数 `FEEDBACK_URL`（値は `https://script.google.com/` の Web アプリ URL のみ）。ローカル確認は `.env.local` に同名で置く。未設定のときは「送信先が未設定です」と表示し、成功にはしない。
 - **GitHub**: ソースコード管理。
 
 ---
